@@ -17,7 +17,7 @@ from recruiterblast.parsers import (
     LinkedinCompanyAPIResponseParser,
     LinkedinEmployeeAPIResponseParser,
 )
-from recruiterblast.utils import retry, sleep_for_random_n_seconds
+from recruiterblast.utils import Timer, retry, sleep_for_random_n_seconds
 
 log = setup_logger(__name__)
 
@@ -37,6 +37,8 @@ class LinkedInScraper(BaseScraper):
         self._update_auth_headers()
 
     def fetch_company_from_job_post(self) -> Company:
+        log.info(f"Starting to fetch company details from {self.job_post_url=}...")
+
         company = Company()
         parser = LinkedinCompanyAPIResponseParser()
 
@@ -52,11 +54,13 @@ class LinkedInScraper(BaseScraper):
         company_data = self._fetch_company_entity_data(company)
         company.domain = parser.get_domain(company_data)
 
-        log.info(f"Successfully fetched {company}")
+        log.info(f"Successfully added {company}")
 
         return company
 
     def fetch_recruiters_from_company(self, company: Company) -> list[Employee]:
+        log.info(f"Starting to fetch recruiters from {company=}...")
+
         employees = {}
         keywords = ["recruiter", "talent%20acquisition"]
         parser = LinkedinEmployeeAPIResponseParser()
@@ -85,33 +89,43 @@ class LinkedInScraper(BaseScraper):
 
                 employees[employee.id] = employee
 
-                log.info(f"Successfully fetched i={len(employees)}, {employee}")
+                log.info(f"Successfully added i={len(employees)}, {employee}")
 
         return list(employees.values())
 
     @retry(log)
     def _fetch_company_from_job_post(self, job_id: int) -> dict:
         url = LINKEDIN_COMPANY_API_URL.format(job_id=job_id)
-        log.info(f"Starting to fetch data for {job_id=}, {url=}...")
-        response = requests.get(url, headers=LINKEDIN_API_HEADERS)
+        with Timer(
+            log,
+            message=f"Time taken to fetch company data from {url=}",
+            unit="milliseconds",
+        ):
+            response = requests.get(url, headers=LINKEDIN_API_HEADERS)
         sleep_for_random_n_seconds(log, min_seconds=1, max_seconds=5)
         return response.json()
 
     @retry(log)
     def _fetch_company_entity_data(self, company: Company) -> dict:
         url = LINKEDIN_COMPANY_ENTITY_API_URL.format(company_id=company.id)
-        log.info(f"Starting to fetch domain for {company.name=}, {url=}...")
-        response = requests.get(url, headers=LINKEDIN_API_HEADERS)
+        with Timer(
+            log,
+            message=f"Time taken to fetch company domain from {url=}",
+            unit="milliseconds",
+        ):
+            response = requests.get(url, headers=LINKEDIN_API_HEADERS)
         sleep_for_random_n_seconds(log, min_seconds=1, max_seconds=5)
         return response.json()
 
     @retry(log)
     def _fetch_recruiters_from_company(self, company: Company, keyword: str) -> str:
         url = LINKEDIN_EMPLOYEE_API_URL.format(company_id=company.id, keyword=keyword)
-        log.info(
-            f"Starting to fetch recruiters from {company.name}, {keyword=}, {url=}..."
-        )
-        response = requests.get(url, headers=LINKEDIN_API_HEADERS)
+        with Timer(
+            log,
+            message=f"Time taken to fetch recruiters from {url=}",
+            unit="milliseconds",
+        ):
+            response = requests.get(url, headers=LINKEDIN_API_HEADERS)
         sleep_for_random_n_seconds(log, min_seconds=1, max_seconds=5)
         return response.json()
 

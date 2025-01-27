@@ -69,3 +69,26 @@ def retry(log, max_retries=3, initial_delay=1, max_delay=32):
         return wrapper
 
     return decorator_retry
+
+
+class Timer:
+    def __init__(self, log, message="Elapsed time", unit="seconds"):
+        self.log = log
+        self.unit = unit.lower()
+        self.message = message
+        self.start_time = None
+
+    def __enter__(self):
+        self.start_time = time.time()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        elapsed_time = time.time() - self.start_time
+
+        if self.unit == "milliseconds":
+            elapsed_time *= 1000
+            unit_str = "ms"
+        else:
+            unit_str = "seconds"
+
+        self.log.info(f"{self.message} time_elapsed_{unit_str}={elapsed_time:.2f}")
