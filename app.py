@@ -49,7 +49,7 @@ def main():
                             f"<a href='mailto:{','.join(emails)}?subject={subject_encoded}&body={body_encoded}'>Send Email</a>"
                             f"<br><em>{recruiter.headline}</em>"
                             f"</div>",
-                            unsafe_allow_html=True
+                            unsafe_allow_html=True,
                         )
 
             except Exception as e:
