@@ -34,16 +34,17 @@ def main():
                     "Field": [
                         "Name",
                         "Industry",
+                        "Domain",
                         "Description",
                         "Employee Count",
-                        "Domain",
+
                     ],
                     "Details": [
                         company.name,
                         company.industry,
+                        company.domain,
                         company.description,
                         company.employee_count,
-                        company.domain,
                     ],
                 }
                 company_df = pd.DataFrame(company_data)
