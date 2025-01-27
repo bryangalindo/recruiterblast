@@ -20,7 +20,7 @@ def main():
     email_subject = st.text_input(
         "Email subject", placeholder="I am a fit for this role."
     )
-    email_body = st.text_input("Email subject", placeholder="This is why.")
+    email_body = st.text_input("Email body", placeholder="This is why.")
 
     if st.button("Submit"):
         if job_url:
@@ -41,13 +41,15 @@ def main():
                     emails = recruiter.generate_email_permutations(company.domain)
                     subject_encoded = quote_plus(email_subject)
                     body_encoded = quote_plus(email_body)
+
                     st.markdown(
-                        f"**{recruiter.full_name}** - *{recruiter.headline}* "
+                        f"**{recruiter.full_name}** | {recruiter.locale} | "
                         f"[Profile Link]({recruiter.profile_url}) | "
                         f"[Send Email](mailto:{','.join(emails)}?"
                         f"subject={subject_encoded}&"
                         f"body={body_encoded})"
                     )
+                    st.markdown(f"*{recruiter.headline}*")
 
             except Exception as e:
                 message = "Failed to fetch company and recruiter data"
