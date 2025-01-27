@@ -17,7 +17,7 @@ from recruiterblast.parsers import (
     LinkedinCompanyAPIResponseParser,
     LinkedinEmployeeAPIResponseParser,
 )
-from recruiterblast.utils import retry
+from recruiterblast.utils import retry, sleep_for_random_n_seconds
 
 log = setup_logger(__name__)
 
@@ -94,6 +94,7 @@ class LinkedInScraper(BaseScraper):
         url = LINKEDIN_COMPANY_API_URL.format(job_id=job_id)
         log.info(f"Starting to fetch data for {job_id=}, {url=}...")
         response = requests.get(url, headers=LINKEDIN_API_HEADERS)
+        sleep_for_random_n_seconds(log, min_seconds=1, max_seconds=5)
         return response.json()
 
     @retry(log)
@@ -101,6 +102,7 @@ class LinkedInScraper(BaseScraper):
         url = LINKEDIN_COMPANY_ENTITY_API_URL.format(company_id=company.id)
         log.info(f"Starting to fetch domain for {company.name=}, {url=}...")
         response = requests.get(url, headers=LINKEDIN_API_HEADERS)
+        sleep_for_random_n_seconds(log, min_seconds=1, max_seconds=5)
         return response.json()
 
     @retry(log)
@@ -110,6 +112,7 @@ class LinkedInScraper(BaseScraper):
             f"Starting to fetch recruiters from {company.name}, {keyword=}, {url=}..."
         )
         response = requests.get(url, headers=LINKEDIN_API_HEADERS)
+        sleep_for_random_n_seconds(log, min_seconds=1, max_seconds=5)
         return response.json()
 
     def _is_valid_public_employee(self, result: dict) -> bool:
