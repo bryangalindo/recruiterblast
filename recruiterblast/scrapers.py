@@ -85,6 +85,7 @@ class LinkedInScraper(BaseScraper):
 
                 employee.headline = parser.get_employee_headline(result)
                 employee.profile_url = parser.get_employee_profile_url(result)
+                employee.locale = parser.get_employee_locale(result)
 
                 employee.full_name = parser.get_employee_name(result)
                 employee.first_name = parser.get_employee_first_name(employee.full_name)
@@ -176,6 +177,7 @@ class LinkedInScraper(BaseScraper):
                 full_name="Jane Doe",
                 headline="HR Manager",
                 profile_url="https://linkedin.com/in/jane",
+                locale="Los Angeles",
             ),
             Employee(
                 first_name="John",
@@ -183,6 +185,7 @@ class LinkedInScraper(BaseScraper):
                 full_name="John Smith",
                 headline="Senior Recruiter",
                 profile_url="https://linkedin.com/in/john",
+                locale="New York",
             ),
         ]
 
