@@ -41,15 +41,16 @@ def main():
                     emails = recruiter.generate_email_permutations(company.domain)
                     subject_encoded = quote_plus(email_subject)
                     body_encoded = quote_plus(email_body)
-
-                    st.markdown(
-                        f"**{recruiter.full_name}** | {recruiter.locale} | "
-                        f"[Profile Link]({recruiter.profile_url}) | "
-                        f"[Send Email](mailto:{','.join(emails)}?"
-                        f"subject={subject_encoded}&"
-                        f"body={body_encoded})"
-                    )
-                    st.markdown(f"*{recruiter.headline}*")
+                    with st.container():
+                        st.markdown(
+                            f"<div style='border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 15px;'>"
+                            f"<strong>{recruiter.full_name}</strong> | {recruiter.locale} | "
+                            f"<a href='{recruiter.profile_url}' target='_blank'>Profile</a> | "
+                            f"<a href='mailto:{','.join(emails)}?subject={subject_encoded}&body={body_encoded}'>Send Email</a>"
+                            f"<br><em>{recruiter.headline}</em>"
+                            f"</div>",
+                            unsafe_allow_html=True
+                        )
 
             except Exception as e:
                 message = "Failed to fetch company and recruiter data"
