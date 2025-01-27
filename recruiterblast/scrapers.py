@@ -17,6 +17,7 @@ from recruiterblast.parsers import (
     LinkedinCompanyAPIResponseParser,
     LinkedinEmployeeAPIResponseParser,
 )
+from recruiterblast.utils import retry
 
 log = setup_logger(__name__)
 
@@ -88,18 +89,21 @@ class LinkedInScraper(BaseScraper):
 
         return list(employees.values())
 
+    @retry(log)
     def _fetch_company_from_job_post(self, job_id: int) -> dict:
         url = LINKEDIN_COMPANY_API_URL.format(job_id=job_id)
         log.info(f"Starting to fetch data for {job_id=}, {url=}...")
         response = requests.get(url, headers=LINKEDIN_API_HEADERS)
         return response.json()
 
+    @retry(log)
     def _fetch_company_entity_data(self, company: Company) -> dict:
         url = LINKEDIN_COMPANY_ENTITY_API_URL.format(company_id=company.id)
         log.info(f"Starting to fetch domain for {company.name=}, {url=}...")
         response = requests.get(url, headers=LINKEDIN_API_HEADERS)
         return response.json()
 
+    @retry(log)
     def _fetch_recruiters_from_company(self, company: Company, keyword: str) -> str:
         url = LINKEDIN_EMPLOYEE_API_URL.format(company_id=company.id, keyword=keyword)
         log.info(
