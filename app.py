@@ -15,7 +15,7 @@ LINKEDIN_URL_REGEX = r"^(https?://)?(www\.)?linkedin\.com/(jobs|in|company)/"
 
 def main():
     st.title("Recruiter Blast 🚀")
-    st.subheader("Streamline your recruiter outreach—fill out the details below!")
+    st.subheader("Mass send your pitch to recruiters from job posts—fill out the details below!")
 
     job_url = st.text_input(
         "Job URL", placeholder="https://www.linkedin.com/jobs/view/4133654166"
@@ -31,7 +31,7 @@ def main():
         unsafe_allow_html=True,
     )
 
-    if st.button("Submit"):
+    if st.button("Generate Email Links"):
 
         if job_url:
             if not re.match(LINKEDIN_URL_REGEX, job_url):
