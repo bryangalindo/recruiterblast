@@ -2,7 +2,6 @@ import re
 from abc import ABC, abstractmethod
 
 import requests
-from nameparser import HumanName
 
 import recruiterblast.config as cfg
 from recruiterblast.constants import (
