@@ -3,6 +3,8 @@ import functools
 import random
 import time
 
+from recruiterblast.constants import USER_AGENTS
+
 
 def generate_email_permutations(
     first_name: str, last_name: str, domain: str
@@ -92,3 +94,7 @@ class Timer:
             unit_str = "seconds"
 
         self.log.info(f"{self.message} time_elapsed_{unit_str}={elapsed_time:.2f}")
+
+
+def get_random_user_agent() -> str:
+    return random.choice(USER_AGENTS)
