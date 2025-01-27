@@ -25,12 +25,16 @@ class LinkedinEmployeeAPIResponseParser:
     @staticmethod
     def get_employee_first_name(full_name: str) -> str:
         parsed_name = HumanName(full_name)
-        return parsed_name.first.replace(" ", "")
+        return parsed_name.first.replace(" ", "").replace(".", "")
 
     @staticmethod
     def get_employee_last_name(full_name: str) -> str:
         parsed_name = HumanName(full_name)
-        return parsed_name.last.replace(" ", "")
+        return parsed_name.last.replace(" ", "").replace(".", "")
+
+    @staticmethod
+    def get_employee_locale(data: dict) -> str:
+        return data["secondarySubtitle"]['text']
 
 
 class LinkedinCompanyAPIResponseParser:
