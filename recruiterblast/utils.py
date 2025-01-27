@@ -1,4 +1,7 @@
 import datetime
+import random
+import functools
+import time
 
 
 def generate_email_permutations(
@@ -25,3 +28,35 @@ def generate_email_permutations(
 
 def get_current_iso_timestamp():
     return datetime.datetime.now(datetime.UTC)
+
+def retry(log, max_retries=3, initial_delay=1, max_delay=32):
+    def decorator_retry(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            retries = 0
+            delay = initial_delay
+
+            while retries < max_retries:
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    retries += 1
+                    if retries == max_retries:
+                        log.info(
+                            f"Max retries reached. Function failed with error: {e}"
+                        )
+                        raise
+
+                    jitter = random.uniform(0, delay)
+                    total_delay = min(delay + jitter, max_delay)
+
+                    log.info(
+                        f"Retrying in {total_delay:.2f} seconds... (Attempt {retries}/{max_retries}) due to error: {e}"
+                    )
+                    time.sleep(total_delay)
+
+                    delay = min(delay * 2, max_delay)
+
+        return wrapper
+
+    return decorator_retry
