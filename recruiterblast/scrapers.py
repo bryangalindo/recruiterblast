@@ -147,11 +147,11 @@ class LinkedInScraper(BaseScraper):
         match = re.search(r"view/(\d+)", url)
         return match.group(1)
 
-    def _update_auth_headers(self):
+    def _update_auth_headers(self) -> None:
         self.headers["cookie"] = cfg.LINKEDIN_COOKIE
         self.headers["csrf-token"] = cfg.LINKEDIN_CSRF_TOKEN
 
-    def _update_user_agent_header(self):
+    def _update_user_agent_header(self) -> None:
         self.headers["user-agent"] = get_random_user_agent()
 
 
