@@ -1,25 +1,17 @@
 import traceback
 
-import pandas as pd
 import streamlit as st
 
-from recruiterblast.models import Company, Employee
+from recruiterblast.logger import setup_logger
 from recruiterblast.scrapers import LinkedInScraper
-from recruiterblast.utils import generate_email_permutations
 
-
-def get_company_and_recruiter_data(job_url: str) -> tuple[Company, list[Employee]]:
-    scraper = LinkedInScraper(job_url)
-    company = scraper.fetch_company_from_job_post()
-    recruiters = scraper.fetch_recruiters_from_company(company)
-    return company, recruiters
+log = setup_logger(__name__)
 
 
 def main():
     st.title("Recruiter Blast 🚀")
     st.write("Automate your recruiter outreach by entering a job post url below.")
 
-    # Input for the job URL
     job_url = st.text_input(
         "Job URL", placeholder="https://www.linkedin.com/jobs/view/4133654166"
     )
@@ -27,33 +19,15 @@ def main():
     if st.button("Submit"):
         if job_url:
             try:
-                company, recruiters = get_company_and_recruiter_data(job_url)
+                scraper = LinkedInScraper(job_url)
+                company, recruiters = scraper.fetch_company_and_recruiter_data()
 
                 st.subheader("Company Information")
-                company_data = {
-                    "Field": [
-                        "Name",
-                        "Industry",
-                        "Domain",
-                        "Employee Count",
-                        "Description",
-                    ],
-                    "Details": [
-                        company.name,
-                        company.industry,
-                        company.domain,
-                        company.employee_count,
-                        company.description,
-                    ],
-                }
-                company_df = pd.DataFrame(company_data)
-                st.table(company_df)
+                st.table(company.as_df())
 
                 st.subheader("Recruiters")
                 for recruiter in recruiters:
-                    emails = generate_email_permutations(
-                        recruiter.first_name, recruiter.last_name, company.domain
-                    )
+                    emails = recruiter.generate_email_permutations(company.domain)
                     st.markdown(
                         f"**{recruiter.full_name}** - *{recruiter.headline}* "
                         f"[Profile Link]({recruiter.profile_url}) | "
@@ -61,9 +35,9 @@ def main():
                     )
 
             except Exception as e:
-                st.error(
-                    f"Failed to fetch company and recruiter data, {traceback.format_exc()}"
-                )
+                message = "Failed to fetch company and recruiter data"
+                st.error(message)
+                log.error(f"{message}, {e}, {traceback.format_exc()}")
         else:
             st.error("Job URL is required!")
 
