@@ -10,9 +10,9 @@ class Company:
     id: int = None
     name: str = None
     industry: str = None
-    description: str = None
-    employee_count: int = None
     domain: str = None
+    employee_count: int = None
+    description: str = None
 
     def as_df(self):
         data = {
