@@ -19,9 +19,9 @@ from recruiterblast.parsers import (
 )
 from recruiterblast.utils import (
     Timer,
+    get_random_user_agent,
     retry,
     sleep_for_random_n_seconds,
-    get_random_user_agent,
 )
 
 log = setup_logger(__name__)
@@ -54,7 +54,7 @@ class LinkedInScraper(BaseScraper):
         company.id = parser.get_company_id(data)
         company.industry = parser.get_industry(data)
         company.description = parser.get_company_description(data)
-        company.employee_count = parser.get_company_description(data)
+        company.employee_count = parser.get_employee_count(data)
 
         company_data = self._fetch_company_entity_data(company)
         company.domain = parser.get_domain(company_data)
