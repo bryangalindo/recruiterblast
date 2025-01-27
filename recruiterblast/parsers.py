@@ -1,4 +1,5 @@
 from urllib.parse import urlparse
+from nameparser import HumanName
 
 
 class LinkedinEmployeeAPIResponseParser:
@@ -19,6 +20,16 @@ class LinkedinEmployeeAPIResponseParser:
     @staticmethod
     def get_employee_profile_url(data: dict) -> str:
         return data["navigationUrl"].split("?")[0]
+
+    @staticmethod
+    def get_employee_first_name(full_name: str) -> str:
+        parsed_name = HumanName(full_name)
+        return parsed_name.first.replace(" ", "")
+
+    @staticmethod
+    def get_employee_last_name(full_name: str) -> str:
+        parsed_name = HumanName(full_name)
+        return parsed_name.last.replace(" ", "")
 
 
 class LinkedinCompanyAPIResponseParser:

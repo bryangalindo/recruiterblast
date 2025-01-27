@@ -88,9 +88,8 @@ class LinkedInScraper(BaseScraper):
                 employee.profile_url = parser.get_employee_profile_url(result)
 
                 employee.full_name = parser.get_employee_name(result)
-                parsed_name = HumanName(employee.full_name)
-                employee.first_name = parsed_name.first
-                employee.last_name = parsed_name.last
+                employee.first_name = parser.get_employee_first_name(employee.full_name)
+                employee.last_name = parser.get_employee_last_name(employee.full_name)
 
                 employees[employee.id] = employee
 
