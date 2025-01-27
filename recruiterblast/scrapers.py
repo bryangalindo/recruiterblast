@@ -17,7 +17,12 @@ from recruiterblast.parsers import (
     LinkedinCompanyAPIResponseParser,
     LinkedinEmployeeAPIResponseParser,
 )
-from recruiterblast.utils import Timer, retry, sleep_for_random_n_seconds
+from recruiterblast.utils import (
+    Timer,
+    retry,
+    sleep_for_random_n_seconds,
+    get_random_user_agent,
+)
 
 log = setup_logger(__name__)
 
@@ -95,6 +100,7 @@ class LinkedInScraper(BaseScraper):
 
     @retry(log)
     def _fetch_company_from_job_post(self, job_id: int) -> dict:
+        self._update_user_agent_header()
         url = LINKEDIN_COMPANY_API_URL.format(job_id=job_id)
         with Timer(
             log,
@@ -107,6 +113,7 @@ class LinkedInScraper(BaseScraper):
 
     @retry(log)
     def _fetch_company_entity_data(self, company: Company) -> dict:
+        self._update_user_agent_header()
         url = LINKEDIN_COMPANY_ENTITY_API_URL.format(company_id=company.id)
         with Timer(
             log,
@@ -119,6 +126,7 @@ class LinkedInScraper(BaseScraper):
 
     @retry(log)
     def _fetch_recruiters_from_company(self, company: Company, keyword: str) -> str:
+        self._update_user_agent_header()
         url = LINKEDIN_EMPLOYEE_API_URL.format(company_id=company.id, keyword=keyword)
         with Timer(
             log,
@@ -142,6 +150,9 @@ class LinkedInScraper(BaseScraper):
     def _update_auth_headers(self):
         self.headers["cookie"] = cfg.LINKEDIN_COOKIE
         self.headers["csrf-token"] = cfg.LINKEDIN_CSRF_TOKEN
+
+    def _update_user_agent_header(self):
+        self.headers["user-agent"] = get_random_user_agent()
 
 
 if __name__ == "__main__":
