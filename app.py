@@ -37,7 +37,6 @@ def main():
                         "Domain",
                         "Description",
                         "Employee Count",
-
                     ],
                     "Details": [
                         company.name,
