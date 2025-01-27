@@ -1,0 +1,9 @@
+gunicorn
+requests
+flask
+python-dotenv
+black
+flask_sqlalchemy
+isort
+nameparser
+streamlit
