@@ -1,6 +1,6 @@
 import datetime
-import random
 import functools
+import random
 import time
 
 
@@ -29,10 +29,14 @@ def generate_email_permutations(
 def get_current_iso_timestamp():
     return datetime.datetime.now(datetime.UTC)
 
-def sleep_for_random_n_seconds(log, min_seconds: int = 15, max_seconds: int = 30) -> None:
+
+def sleep_for_random_n_seconds(
+    log, min_seconds: int = 15, max_seconds: int = 30
+) -> None:
     sleep_time = random.uniform(min_seconds, max_seconds)
     log.info(f"Sleeping for {sleep_time=} seconds...")
     time.sleep(sleep_time)
+
 
 def retry(log, max_retries=3, initial_delay=1, max_delay=32):
     def decorator_retry(func):
