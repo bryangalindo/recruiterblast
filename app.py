@@ -22,6 +22,12 @@ def main():
     )
     email_body = st.text_input("Email body", placeholder="This is why.")
 
+    st.markdown(
+        "<p style='color: gray;'>No worries, we don’t store your data. "
+        "All information is only used during your session and isn’t saved anywhere.</p>",
+        unsafe_allow_html=True,
+    )
+
     if st.button("Submit"):
         if job_url:
             try:
