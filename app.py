@@ -17,7 +17,7 @@ def get_company_and_recruiter_data(job_url: str) -> tuple[Company, list[Employee
 
 def main():
     st.title("Recruiter Blast 🚀")
-    st.write("Automate your recruiter outreach by submitting a job post url below.")
+    st.write("Automate your recruiter outreach by entering a job post url below.")
 
     # Input for the job URL
     job_url = st.text_input(
@@ -35,15 +35,15 @@ def main():
                         "Name",
                         "Industry",
                         "Domain",
-                        "Description",
                         "Employee Count",
+                        "Description",
                     ],
                     "Details": [
                         company.name,
                         company.industry,
                         company.domain,
-                        company.description,
                         company.employee_count,
+                        company.description,
                     ],
                 }
                 company_df = pd.DataFrame(company_data)
