@@ -1,4 +1,5 @@
 import traceback
+from urllib.parse import quote_plus
 
 import streamlit as st
 
@@ -16,6 +17,10 @@ def main():
     job_url = st.text_input(
         "Job URL", placeholder="https://www.linkedin.com/jobs/view/4133654166"
     )
+    email_subject = st.text_input(
+        "Email subject", placeholder="I am a fit for this role."
+    )
+    email_body = st.text_input("Email subject", placeholder="This is why.")
 
     if st.button("Submit"):
         if job_url:
@@ -24,7 +29,7 @@ def main():
 
                 company, recruiters = (
                     scraper.generate_mock_company_recruiter_data()
-                    if cfg.ENV != 'prod'
+                    if cfg.ENV != "prod"
                     else scraper.fetch_company_and_recruiter_data()
                 )
 
@@ -34,10 +39,14 @@ def main():
                 st.subheader("Recruiters")
                 for recruiter in recruiters:
                     emails = recruiter.generate_email_permutations(company.domain)
+                    subject_encoded = quote_plus(email_subject)
+                    body_encoded = quote_plus(email_body)
                     st.markdown(
                         f"**{recruiter.full_name}** - *{recruiter.headline}* "
                         f"[Profile Link]({recruiter.profile_url}) | "
-                        f"[Send Email](mailto:{','.join(emails)})"
+                        f"[Send Email](mailto:{','.join(emails)}?"
+                        f"subject={subject_encoded}&"
+                        f"body={body_encoded})"
                     )
 
             except Exception as e:
