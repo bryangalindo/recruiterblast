@@ -12,6 +12,7 @@ log = setup_logger(__name__)
 
 LINKEDIN_URL_REGEX = r"^(https?://)?(www\.)?linkedin\.com/(jobs|in|company)/"
 
+
 def main():
     st.title("Recruiter Blast 🚀")
     st.subheader("Streamline your recruiter outreach—fill out the details below!")
@@ -34,7 +35,9 @@ def main():
 
         if job_url:
             if not re.match(LINKEDIN_URL_REGEX, job_url):
-                st.error("Please enter a valid LinkedIn URL (e.g., 'https://www.linkedin.com/jobs/view/4133654166')")
+                st.error(
+                    "Please enter a valid LinkedIn URL (e.g., 'https://www.linkedin.com/jobs/view/4133654166')"
+                )
             else:
                 try:
                     scraper = LinkedInScraper(job_url)
