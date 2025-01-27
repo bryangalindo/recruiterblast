@@ -2,6 +2,7 @@ import datetime
 import functools
 import random
 import time
+import traceback
 
 from recruiterblast.constants import USER_AGENTS
 
@@ -54,7 +55,8 @@ def retry(log, max_retries=3, initial_delay=1, max_delay=32):
                     retries += 1
                     if retries == max_retries:
                         log.info(
-                            f"Max retries reached. Function failed with error: {e}"
+                            f"Max retries reached. Function failed with error: {e}, "
+                            f"{traceback.format_exc()}"
                         )
                         raise
 
@@ -62,7 +64,9 @@ def retry(log, max_retries=3, initial_delay=1, max_delay=32):
                     total_delay = min(delay + jitter, max_delay)
 
                     log.info(
-                        f"Retrying in {total_delay:.2f} seconds... (Attempt {retries}/{max_retries}) due to error: {e}"
+                        f"Retrying in {total_delay:.2f} seconds... "
+                        f"(Attempt {retries}/{max_retries}) due to error: {e}, "
+                        f"{traceback.format_exc()}"
                     )
                     time.sleep(total_delay)
 
