@@ -157,6 +157,38 @@ class LinkedInScraper(BaseScraper):
     def _update_user_agent_header(self) -> None:
         self.headers["user-agent"] = get_random_user_agent()
 
+    @staticmethod
+    def generate_mock_company():
+        return Company(
+            name="Company ABC",
+            industry="Technology",
+            description="A leading technology company specializing in AI.",
+            employee_count=500,
+            domain="companyabc.com",
+        )
+
+    @staticmethod
+    def generate_mock_recruiters():
+        return [
+            Employee(
+                first_name="Jane",
+                last_name="Doe",
+                full_name="Jane Doe",
+                headline="HR Manager",
+                profile_url="https://linkedin.com/in/jane",
+            ),
+            Employee(
+                first_name="John",
+                last_name="Smith",
+                full_name="John Smith",
+                headline="Senior Recruiter",
+                profile_url="https://linkedin.com/in/john",
+            ),
+        ]
+
+    def generate_mock_company_recruiter_data(self):
+        return (self.generate_mock_company(), self.generate_mock_recruiters())
+
 
 if __name__ == "__main__":
     # pass
