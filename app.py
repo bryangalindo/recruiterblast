@@ -31,7 +31,7 @@ def main():
         unsafe_allow_html=True,
     )
 
-    if st.button("Generate Email Links"):
+    if st.button("Generate Email Links", type="primary"):
 
         if job_url:
             if not re.match(LINKEDIN_URL_REGEX, job_url):
