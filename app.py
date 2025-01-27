@@ -2,6 +2,7 @@ import traceback
 
 import streamlit as st
 
+import recruiterblast.config as cfg
 from recruiterblast.logger import setup_logger
 from recruiterblast.scrapers import LinkedInScraper
 
@@ -10,7 +11,7 @@ log = setup_logger(__name__)
 
 def main():
     st.title("Recruiter Blast 🚀")
-    st.write("Automate your recruiter outreach by entering a job post url below.")
+    st.subheader("Automate your recruiter outreach by entering a job post url below.")
 
     job_url = st.text_input(
         "Job URL", placeholder="https://www.linkedin.com/jobs/view/4133654166"
@@ -20,7 +21,12 @@ def main():
         if job_url:
             try:
                 scraper = LinkedInScraper(job_url)
-                company, recruiters = scraper.fetch_company_and_recruiter_data()
+
+                company, recruiters = (
+                    scraper.generate_mock_company_recruiter_data()
+                    if cfg.ENV != 'prod'
+                    else scraper.fetch_company_and_recruiter_data()
+                )
 
                 st.subheader("Company Information")
                 st.table(company.as_df())
