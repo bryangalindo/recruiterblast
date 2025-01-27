@@ -1,5 +1,6 @@
 import traceback
 from urllib.parse import quote_plus
+import re
 
 import streamlit as st
 
@@ -9,6 +10,7 @@ from recruiterblast.scrapers import LinkedInScraper
 
 log = setup_logger(__name__)
 
+LINKEDIN_URL_REGEX = r"^(https?://)?(www\.)?linkedin\.com/(jobs|in|company)/"
 
 def main():
     st.title("Recruiter Blast 🚀")
@@ -29,41 +31,45 @@ def main():
     )
 
     if st.button("Submit"):
+
         if job_url:
-            try:
-                scraper = LinkedInScraper(job_url)
+            if not re.match(LINKEDIN_URL_REGEX, job_url):
+                st.error("Please enter a valid LinkedIn URL (e.g., 'https://www.linkedin.com/jobs/view/4133654166')")
+            else:
+                try:
+                    scraper = LinkedInScraper(job_url)
 
-                company, recruiters = (
-                    scraper.generate_mock_company_recruiter_data()
-                    if cfg.ENV != "prod"
-                    else scraper.fetch_company_and_recruiter_data()
-                )
+                    company, recruiters = (
+                        scraper.generate_mock_company_recruiter_data()
+                        if cfg.ENV != "prod"
+                        else scraper.fetch_company_and_recruiter_data()
+                    )
 
-                st.subheader("Company Information")
-                st.table(company.as_df())
+                    st.subheader("Company Information")
+                    st.table(company.as_df())
 
-                st.subheader("Recruiters")
+                    st.subheader("Recruiters")
 
-                for recruiter in recruiters:
-                    emails = recruiter.generate_email_permutations(company.domain)
-                    subject_encoded = quote_plus(email_subject)
-                    body_encoded = quote_plus(email_body)
+                    for recruiter in recruiters:
+                        emails = recruiter.generate_email_permutations(company.domain)
+                        subject_encoded = quote_plus(email_subject)
+                        body_encoded = quote_plus(email_body)
 
-                    with st.container():
-                        st.markdown(
-                            f"<div style='border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 15px;'>"
-                            f"<strong>{recruiter.full_name}</strong> | {recruiter.locale} | "
-                            f"<a href='{recruiter.profile_url}' target='_blank'>Profile</a> | "
-                            f"<a href='mailto:{','.join(emails)}?subject={subject_encoded}&body={body_encoded}'>Send Email</a>"
-                            f"<br><em>{recruiter.headline}</em>"
-                            f"</div>",
-                            unsafe_allow_html=True,
-                        )
+                        with st.container():
+                            st.markdown(
+                                f"<div style='border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 15px;'>"
+                                f"<strong>{recruiter.full_name}</strong> | {recruiter.locale} | "
+                                f"<a href='{recruiter.profile_url}' target='_blank'>Profile</a> | "
+                                f"<a href='mailto:{','.join(emails)}?subject={subject_encoded}&body={body_encoded}'>Send Email</a>"
+                                f"<br><em>{recruiter.headline}</em>"
+                                f"</div>",
+                                unsafe_allow_html=True,
+                            )
 
-            except Exception as e:
-                message = "Failed to fetch company and recruiter data"
-                st.error(message)
-                log.error(f"{message}, {e}, {traceback.format_exc()}")
+                except Exception as e:
+                    message = "Failed to fetch company and recruiter data"
+                    st.error(message)
+                    log.error(f"{message}, {e}, {traceback.format_exc()}")
         else:
             st.error("Job URL is required!")
 
