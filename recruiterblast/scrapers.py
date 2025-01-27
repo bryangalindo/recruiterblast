@@ -96,6 +96,11 @@ class LinkedInScraper(BaseScraper):
 
         return list(employees.values())
 
+    def fetch_company_and_recruiter_data(self) -> tuple[Company, list[Employee]]:
+        company = self.fetch_company_from_job_post()
+        recruiters = self.fetch_recruiters_from_company(company)
+        return company, recruiters
+
     @retry(log)
     def _fetch_company_from_job_post(self, job_id: int) -> dict:
         self._update_user_agent_header()
