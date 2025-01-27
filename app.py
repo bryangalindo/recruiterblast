@@ -12,7 +12,7 @@ log = setup_logger(__name__)
 
 def main():
     st.title("Recruiter Blast 🚀")
-    st.subheader("Automate your recruiter outreach by entering a job post url below.")
+    st.subheader("Streamline your recruiter outreach—fill out the details below!")
 
     job_url = st.text_input(
         "Job URL", placeholder="https://www.linkedin.com/jobs/view/4133654166"
