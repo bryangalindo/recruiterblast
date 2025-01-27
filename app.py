@@ -37,10 +37,12 @@ def main():
                 st.table(company.as_df())
 
                 st.subheader("Recruiters")
+
                 for recruiter in recruiters:
                     emails = recruiter.generate_email_permutations(company.domain)
                     subject_encoded = quote_plus(email_subject)
                     body_encoded = quote_plus(email_body)
+
                     with st.container():
                         st.markdown(
                             f"<div style='border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 15px;'>"
