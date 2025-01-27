@@ -29,6 +29,7 @@ class Employee:
     last_name: str = None
     full_name: str = None
     headline: str = None
+    locale: str = None
     profile_url: str = None
 
     def generate_email_permutations(self, domain: str) -> set[str]:
