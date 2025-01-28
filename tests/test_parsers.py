@@ -3,9 +3,9 @@ from unittest import TestCase
 from parameterized import parameterized
 
 from recruiterblast.parsers import (
-    parse_linkedin_job_url,
-    parse_emails_from_text,
     LinkedinCompanyAPIResponseParser,
+    parse_emails_from_text,
+    parse_linkedin_job_url,
 )
 
 

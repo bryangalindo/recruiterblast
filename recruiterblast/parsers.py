@@ -1,6 +1,6 @@
 import re
-import tldextract
 
+import tldextract
 from nameparser import HumanName
 
 

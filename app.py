@@ -5,8 +5,8 @@ import pandas as pd
 import streamlit as st
 
 import recruiterblast.config as cfg
-from recruiterblast.models import Company, Employee
 from recruiterblast.logger import setup_logger
+from recruiterblast.models import Company, Employee
 from recruiterblast.parsers import parse_linkedin_job_url
 from recruiterblast.scrapers import (
     BingSearchScraper,

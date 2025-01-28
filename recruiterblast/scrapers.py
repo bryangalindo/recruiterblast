@@ -5,8 +5,8 @@ import requests
 
 import recruiterblast.config as cfg
 from recruiterblast.constants import (
-    GOOGLE_SEARCH_API_URL,
     BING_SEARCH_API_URL,
+    GOOGLE_SEARCH_API_URL,
     LINKEDIN_API_HEADERS,
     LINKEDIN_COMPANY_API_URL,
     LINKEDIN_COMPANY_ENTITY_API_URL,
