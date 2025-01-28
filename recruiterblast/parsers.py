@@ -1,5 +1,5 @@
 import re
-from urllib.parse import urlparse
+import tldextract
 
 from nameparser import HumanName
 
@@ -87,5 +87,5 @@ class LinkedinCompanyAPIResponseParser:
     @staticmethod
     def get_domain(data: dict) -> str:
         url = data["data"]["websiteUrl"]
-        parsed_url = urlparse(url)
-        return parsed_url.netloc.replace("www.", "")
+        extracted = tldextract.extract(url)
+        return f"{extracted.domain}.{extracted.suffix}"

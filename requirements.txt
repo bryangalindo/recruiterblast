@@ -9,3 +9,4 @@ nameparser
 streamlit
 parameterized
 pre-commit
+tldextract
