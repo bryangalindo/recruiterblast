@@ -232,11 +232,12 @@ class GoogleSearchScraper:
         )
         for i, item in enumerate(results.get("items", [])):
             snippet = str(item["snippet"])
-            log.info(f"Parsing emails from {i=} {snippet=}...")
+            log.debug(f"Parsing emails from {i=} {snippet=}...")
             words = snippet.split()
             for word in words:
                 if validators.email(word):
                     emails.add(word)
+                    log.info(f"Successfully parsed email={word=}...")
         return list(emails)
 
     @retry(log)
