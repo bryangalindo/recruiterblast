@@ -8,9 +8,9 @@ import recruiterblast.config as cfg
 from recruiterblast.logger import setup_logger
 from recruiterblast.parsers import LinkedInURLParser
 from recruiterblast.scrapers import (
-    LinkedInScraper,
     BingSearchScraper,
     GoogleSearchScraper,
+    LinkedInScraper,
 )
 
 log = setup_logger(__name__)

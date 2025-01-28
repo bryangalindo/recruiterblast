@@ -1,16 +1,17 @@
 from unittest import TestCase, mock
 
 from constants import (
+    MOCK_BING_SEARCH_API_RESPONSE,
     MOCK_COMPANY_API_RESPONSE,
     MOCK_COMPANY_ENTITY_API_RESPONSE,
-    MOCK_BING_SEARCH_API_RESPONSE,
     MOCK_GOOGLE_SEARCH_API_RESPONSE,
 )
+
 from recruiterblast.models import Company
 from recruiterblast.scrapers import (
-    LinkedInScraper,
     BingSearchScraper,
     GoogleSearchScraper,
+    LinkedInScraper,
 )
 
 

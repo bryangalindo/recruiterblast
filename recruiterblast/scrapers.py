@@ -6,11 +6,11 @@ import validators
 
 import recruiterblast.config as cfg
 from recruiterblast.constants import (
+    BING_SEARCH_API_URL,
     LINKEDIN_API_HEADERS,
     LINKEDIN_COMPANY_API_URL,
     LINKEDIN_COMPANY_ENTITY_API_URL,
     LINKEDIN_EMPLOYEE_API_URL,
-    BING_SEARCH_API_URL,
 )
 from recruiterblast.logger import setup_logger
 from recruiterblast.models import Company, Employee
