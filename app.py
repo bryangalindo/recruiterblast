@@ -81,16 +81,16 @@ def main():
                         emails = set(bing_emails + google_emails)
 
                     st.subheader("Company Emails")
-                    display_company_email_search_button(company.domain)
                     st.write(
                         f"Sometimes you can see employee emails in the search result snippet, try it out!"
                     )
+                    display_company_email_search_button(company.domain)
                     if emails:
-                        st.table(pd.DataFrame(emails, columns=["email"]))
                         st.write(
                             f"We scraped these emails from {company.domain}. "
                             f"Hopefully they help you identify the correct email format."
                         )
+                        st.table(pd.DataFrame(emails, columns=["email"]))
 
                     st.subheader("Recruiters")
 
