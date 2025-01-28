@@ -17,6 +17,8 @@ log = setup_logger(__name__)
 
 
 def main():
+    st.set_page_config(page_title="RecruiterBlast.dev", page_icon="🚀")
+
     st.title("Recruiter Blast 🚀")
     st.subheader("Mass send your pitch to recruiters from job posts!")
 
