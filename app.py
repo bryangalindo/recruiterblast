@@ -5,6 +5,7 @@ import pandas as pd
 import streamlit as st
 
 import recruiterblast.config as cfg
+from recruiterblast.models import Company, Employee
 from recruiterblast.logger import setup_logger
 from recruiterblast.parsers import parse_linkedin_job_url
 from recruiterblast.scrapers import (
@@ -14,6 +15,16 @@ from recruiterblast.scrapers import (
 )
 
 log = setup_logger(__name__)
+
+
+def generate_email_subject_and_body(
+    company: Company, recruiter: Employee, job_url: str
+) -> tuple[str, str]:
+    subject = f"I am interested in {company.name}'s Software Engineer Role."
+    body = f"Hello {recruiter.first_name},\nI just applied to {job_url}, and I think we're a fit."
+    subject_encoded = quote_plus(subject).replace("+", "%20")
+    body_encoded = quote_plus(body).replace("+", "%20")
+    return subject_encoded, body_encoded
 
 
 def display_company_email_search_button(domain: str):
@@ -85,16 +96,17 @@ def main():
                     st.subheader("Recruiters")
 
                     for recruiter in recruiters:
+                        subject, body = generate_email_subject_and_body(
+                            company, recruiter, job_url
+                        )
                         emails = recruiter.generate_email_permutations(company.domain)
-                        subject_encoded = quote_plus(email_subject)
-                        body_encoded = quote_plus(email_body)
 
                         with st.container():
                             st.markdown(
                                 f"<div style='border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 15px;'>"
                                 f"<strong>{recruiter.full_name}</strong> | {recruiter.locale} | "
                                 f"<a href='{recruiter.profile_url}' target='_blank'>Profile</a> | "
-                                f"<a href='mailto:{','.join(emails)}?subject={subject_encoded}&body={body_encoded}'>Send Email</a>"
+                                f"<a href='mailto:{','.join(emails)}?subject={subject}&body={body}'>Send Email</a>"
                                 f"<br><em>{recruiter.headline}</em>"
                                 f"</div>",
                                 unsafe_allow_html=True,
