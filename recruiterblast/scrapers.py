@@ -2,6 +2,7 @@ import re
 from abc import ABC, abstractmethod
 
 import requests
+import validators
 
 import recruiterblast.config as cfg
 from recruiterblast.constants import (
@@ -9,6 +10,7 @@ from recruiterblast.constants import (
     LINKEDIN_COMPANY_API_URL,
     LINKEDIN_COMPANY_ENTITY_API_URL,
     LINKEDIN_EMPLOYEE_API_URL,
+    BING_SEARCH_API_URL,
 )
 from recruiterblast.logger import setup_logger
 from recruiterblast.models import Company, Employee
@@ -193,9 +195,29 @@ class LinkedInScraper(BaseScraper):
         return (self.generate_mock_company(), self.generate_mock_recruiters())
 
 
-if __name__ == "__main__":
-    # pass
-    scraper = LinkedInScraper("https://www.linkedin.com/jobs/view/4133961406")
-    company = scraper.fetch_company_from_job_post()
-    recruiters = scraper.fetch_recruiters_from_company(company)
-    print(recruiters)
+class BingScraper:
+    def scrape_company_emails_from_domain(self, domain: str) -> list[str]:
+        emails = set()
+        results = self._search_bing(
+            f'site:{domain} "@{domain}"',
+        )
+        for item in results.get("webPages", {}).get("value", []):
+            snippet = str(item["snippet"])
+            words = snippet.split()
+            for word in words:
+                if validators.email(word):
+                    emails.add(word)
+        return list(emails)
+
+    @retry(log)
+    def _search_bing(self, query: str) -> dict:
+        with Timer(
+            log,
+            message=f"Time taken to process Bing {query=}",
+            unit="milliseconds",
+        ):
+            headers = {"Ocp-Apim-Subscription-Key": cfg.BING_SEARCH_API_KEY}
+            response = requests.get(
+                BING_SEARCH_API_URL, headers=headers, params={"q": query}
+            )
+            return response.json() or {}

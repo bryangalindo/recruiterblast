@@ -1,7 +1,7 @@
 from unittest import TestCase, mock
 
 from recruiterblast.models import Company
-from recruiterblast.scrapers import LinkedInScraper
+from recruiterblast.scrapers import LinkedInScraper, BingScraper
 
 MOCK_COMPANY_API_RESPONSE = {
     "data": {},
@@ -29,6 +29,16 @@ MOCK_COMPANY_ENTITY_API_RESPONSE = {
     "included": [],
 }
 
+MOCK_BING_SEARCH_API_RESPONSE = {
+    "webPages": {
+        "value": [
+            {
+                "snippet": "Reach out at foo@bar.com",
+            }
+        ]
+    }
+}
+
 
 class LinkedInScraperTest(TestCase):
     @mock.patch.object(LinkedInScraper, "_fetch_company_from_job_post")
@@ -49,3 +59,23 @@ class LinkedInScraperTest(TestCase):
         actual = scraper.fetch_company_from_job_post()
 
         self.assertEqual(expected, actual)
+
+
+class BingScraperTest(TestCase):
+    @mock.patch.object(BingScraper, "_search_bing")
+    def test_bing_scraper_returns_valid_emails(self, mock_search):
+        mock_search.return_value = MOCK_BING_SEARCH_API_RESPONSE
+        scraper = BingScraper()
+
+        emails = scraper.scrape_company_emails_from_domain("bar.com")
+
+        self.assertEqual("foo@bar.com", emails[0])
+
+    @mock.patch.object(BingScraper, "_search_bing")
+    def test_bing_scraper_returns_empty_list_if_response_empty(self, mock_search):
+        mock_search.return_value = {}
+        scraper = BingScraper()
+
+        emails = scraper.scrape_company_emails_from_domain("bar.com")
+
+        self.assertEqual([], emails)
