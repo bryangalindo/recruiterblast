@@ -8,3 +8,5 @@ isort
 nameparser
 streamlit
 parameterized
+validators
+pre-commit
