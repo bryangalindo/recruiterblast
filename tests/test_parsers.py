@@ -2,7 +2,11 @@ from unittest import TestCase
 
 from parameterized import parameterized
 
-from recruiterblast.parsers import parse_linkedin_job_url, parse_emails_from_text
+from recruiterblast.parsers import (
+    parse_linkedin_job_url,
+    parse_emails_from_text,
+    LinkedinCompanyAPIResponseParser,
+)
 
 
 class ParserTest(TestCase):
@@ -106,3 +110,11 @@ class EmailParserTest(TestCase):
             expected_emails,
             result,
         )
+
+
+class TestLinkedinCompanyAPIResponseParser(TestCase):
+    def test_domain_parser_omits_subdomains(self):
+        data = {"data": {"websiteUrl": "https://www.about.gitlab.com"}}
+        expected = "gitlab.com"
+        actual = LinkedinCompanyAPIResponseParser.get_domain(data)
+        self.assertEqual(expected, actual)
