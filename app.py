@@ -16,6 +16,14 @@ from recruiterblast.scrapers import (
 log = setup_logger(__name__)
 
 
+def display_company_email_search_button(domain: str):
+    url = f"https://www.google.com/search?q=site:{domain}+%22@{domain}%22"
+    st.markdown(
+        f'<a href="{url}" target="_blank"><button style="background-color: #F63366; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Search {domain} Emails</button></a>',
+        unsafe_allow_html=True,
+    )
+
+
 def main():
     st.set_page_config(page_title="RecruiterBlast.dev", page_icon="🚀")
 
@@ -72,8 +80,12 @@ def main():
                         )
                         emails = set(bing_emails + google_emails)
 
+                    st.subheader("Company Emails")
+                    st.write(
+                        f"Sometimes you can see employee emails in the search result snippet, try it out!"
+                    )
+                    display_company_email_search_button(company.domain)
                     if emails:
-                        st.subheader("Company Emails")
                         st.write(
                             f"We scraped these emails from {company.domain}. "
                             f"Hopefully they help you identify the correct email format."
