@@ -1,14 +1,26 @@
 import traceback
 from urllib.parse import quote_plus
 
+import pandas as pd
 import streamlit as st
 
 import recruiterblast.config as cfg
 from recruiterblast.logger import setup_logger
 from recruiterblast.parsers import LinkedInURLParser
-from recruiterblast.scrapers import LinkedInScraper
+from recruiterblast.scrapers import LinkedInScraper, BingScraper
 
 log = setup_logger(__name__)
+
+
+def display_emails_in_table(emails: list[str]):
+    table_html = "<table style='width:100%; border-collapse: collapse;'>"
+    for email in emails:
+        table_html += (
+            f"<tr><td style='border: 1px solid #ddd; padding: 8px;'>{email}</td></tr>"
+        )
+    table_html += "</table>"
+
+    st.markdown(table_html, unsafe_allow_html=True)
 
 
 def main():
@@ -49,6 +61,19 @@ def main():
 
                     st.subheader("Company Information")
                     st.table(company.as_df())
+
+                    st.subheader("Company Emails")
+                    st.write(
+                        f"We scraped these emails from {company.domain}. "
+                        f"Hopefully they help you identify the correct email format."
+                    )
+                    scraper = BingScraper()
+                    emails = (
+                        scraper.scrape_company_emails_from_domain(company.domain)
+                        if cfg.ENV == "prod"
+                        else ["email1@example.com", "email2@example.com"]
+                    )
+                    st.table(pd.DataFrame(emails, columns=["email"]))
 
                     st.subheader("Recruiters")
 
