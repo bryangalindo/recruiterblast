@@ -15,9 +15,7 @@ LINKEDIN_URL_REGEX = r"^(https?://)?(www\.)?linkedin\.com/(jobs|in|company)/"
 
 def main():
     st.title("Recruiter Blast 🚀")
-    st.subheader(
-        "Mass send your pitch to recruiters from job posts!"
-    )
+    st.subheader("Mass send your pitch to recruiters from job posts!")
 
     job_url = st.text_input(
         "Job URL", placeholder="https://www.linkedin.com/jobs/view/4133654166"
