@@ -6,7 +6,7 @@ import streamlit as st
 
 import recruiterblast.config as cfg
 from recruiterblast.logger import setup_logger
-from recruiterblast.parsers import LinkedInURLParser
+from recruiterblast.parsers import parse_linkedin_job_url
 from recruiterblast.scrapers import (
     BingSearchScraper,
     GoogleSearchScraper,
@@ -37,7 +37,7 @@ def main():
     if st.button("Generate Email Links", type="primary"):
 
         if job_url:
-            job_url = LinkedInURLParser.parse_linkedin_job_url(job_url)
+            job_url = parse_linkedin_job_url(job_url)
             if not job_url:
                 st.error(
                     "Please enter a valid LinkedIn URL (e.g., 'https://www.linkedin.com/jobs/view/4133654166')"
