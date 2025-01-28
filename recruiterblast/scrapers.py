@@ -5,6 +5,7 @@ import requests
 
 import recruiterblast.config as cfg
 from recruiterblast.constants import (
+    GOOGLE_SEARCH_API_URL,
     BING_SEARCH_API_URL,
     LINKEDIN_API_HEADERS,
     LINKEDIN_COMPANY_API_URL,
@@ -201,7 +202,9 @@ class BingSearchScraper:
         results = self._search_bing(
             f'site:{domain} "@{domain}"',
         )
-        for i, item in enumerate(results.get("webPages", {}).get("value", [])):
+        search_results = results.get("webPages", {}).get("value", [])
+        log.info(f"Starting to parse {len(search_results)} search results...")
+        for i, item in enumerate(search_results):
             snippet = str(item["snippet"])
             log.debug(f"Parsing emails from {i=} {snippet=}...")
             emails = parse_emails_from_text(snippet)
@@ -221,7 +224,11 @@ class BingSearchScraper:
             response = requests.get(
                 BING_SEARCH_API_URL, headers=headers, params={"q": query}
             )
-            return response.json() or {}
+            data = response.json()
+            log.debug(
+                f"Successfully received response {response.status_code} from {response.url} with {data=}"
+            )
+            return data or {}
 
 
 class GoogleSearchScraper:
@@ -230,7 +237,9 @@ class GoogleSearchScraper:
         results = self._search_google(
             f'site:{domain} "@{domain}"',
         )
-        for i, item in enumerate(results.get("items", [])):
+        search_results = results.get("items", [])
+        log.info(f"Starting to parse {len(search_results)} search results...")
+        for i, item in enumerate(search_results):
             snippet = str(item["snippet"])
             log.debug(f"Parsing emails from {i=} {snippet=}...")
             emails = parse_emails_from_text(snippet)
@@ -247,9 +256,32 @@ class GoogleSearchScraper:
             unit="milliseconds",
         ):
             params = {
-                "q": query,
-                "cx": cfg.GOOGLE_SEARCH_CUSTOM_SEARCH_ENGINE_ID,
                 "key": cfg.GOOGLE_SEARCH_API_KEY,
+                "cx": cfg.GOOGLE_SEARCH_CUSTOM_SEARCH_ENGINE_ID,
+                "q": query,
             }
-            response = requests.get(BING_SEARCH_API_URL, params=params)
-            return response.json() or {}
+            response = requests.get(GOOGLE_SEARCH_API_URL, params=params)
+            data = response.json()
+            log.debug(
+                f"Successfully received response {response.status_code} from {response.url} with {data=}"
+            )
+            return data or {}
+
+
+if __name__ == "__main__":
+    pass
+    # job_url = 'https://www.linkedin.com/jobs/view/4133654166'
+    # scraper = LinkedInScraper(job_url)
+    # company = scraper.fetch_company_from_job_post()
+    # bing_scraper = BingSearchScraper()
+    # bing_emails = bing_scraper.scrape_emails_from_company_domain(
+    #     company.domain
+    # )
+    # google_scraper = GoogleSearchScraper()
+    # google_emails = (
+    #     google_scraper.scrape_emails_from_company_domain(
+    #         company.domain
+    #     )
+    # )
+    # emails = set(bing_emails + google_emails)
+    # print(emails)
