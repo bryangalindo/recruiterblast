@@ -2,7 +2,6 @@ import re
 from abc import ABC, abstractmethod
 
 import requests
-import validators
 
 import recruiterblast.config as cfg
 from recruiterblast.constants import (
@@ -17,6 +16,7 @@ from recruiterblast.models import Company, Employee
 from recruiterblast.parsers import (
     LinkedinCompanyAPIResponseParser,
     LinkedinEmployeeAPIResponseParser,
+    parse_emails_from_text,
 )
 from recruiterblast.utils import (
     Timer,
@@ -197,18 +197,18 @@ class LinkedInScraper(BaseScraper):
 
 class BingSearchScraper:
     def scrape_emails_from_company_domain(self, domain: str) -> list[str]:
-        emails = set()
+        scraped_emails = set()
         results = self._search_bing(
             f'site:{domain} "@{domain}"',
         )
         for i, item in enumerate(results.get("webPages", {}).get("value", [])):
             snippet = str(item["snippet"])
-            log.info(f"Parsing emails from {i=} {snippet=}...")
-            words = snippet.split()
-            for word in words:
-                if validators.email(word):
-                    emails.add(word)
-        return list(emails)
+            log.debug(f"Parsing emails from {i=} {snippet=}...")
+            emails = parse_emails_from_text(snippet)
+            for email in emails:
+                scraped_emails.add(email)
+                log.info(f"Successfully scraped {i=}, {email=}...")
+        return list(scraped_emails)
 
     @retry(log)
     def _search_bing(self, query: str) -> dict:
@@ -226,19 +226,18 @@ class BingSearchScraper:
 
 class GoogleSearchScraper:
     def scrape_emails_from_company_domain(self, domain: str) -> list[str]:
-        emails = set()
+        scraped_emails = set()
         results = self._search_google(
             f'site:{domain} "@{domain}"',
         )
         for i, item in enumerate(results.get("items", [])):
             snippet = str(item["snippet"])
             log.debug(f"Parsing emails from {i=} {snippet=}...")
-            words = snippet.split()
-            for word in words:
-                if validators.email(word):
-                    emails.add(word)
-                    log.info(f"Successfully parsed email={word=}...")
-        return list(emails)
+            emails = parse_emails_from_text(snippet)
+            for email in emails:
+                scraped_emails.add(email)
+                log.info(f"Successfully scraped {i=}, {email=}...")
+        return list(scraped_emails)
 
     @retry(log)
     def _search_google(self, query: str) -> dict:
