@@ -201,8 +201,9 @@ class BingSearchScraper:
         results = self._search_bing(
             f'site:{domain} "@{domain}"',
         )
-        for item in results.get("webPages", {}).get("value", []):
+        for i, item in enumerate(results.get("webPages", {}).get("value", [])):
             snippet = str(item["snippet"])
+            log.info(f"Parsing emails from {i=} {snippet=}...")
             words = snippet.split()
             for word in words:
                 if validators.email(word):
@@ -229,8 +230,9 @@ class GoogleSearchScraper:
         results = self._search_google(
             f'site:{domain} "@{domain}"',
         )
-        for item in results.get("items", []):
+        for i, item in enumerate(results.get("items", [])):
             snippet = str(item["snippet"])
+            log.info(f"Parsing emails from {i=} {snippet=}...")
             words = snippet.split()
             for word in words:
                 if validators.email(word):
