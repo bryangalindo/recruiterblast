@@ -28,23 +28,13 @@ def main():
     st.set_page_config(page_title="RecruiterBlast.dev", page_icon="🚀")
 
     st.title("Recruiter Blast 🚀")
-    st.subheader("Mass send your pitch to recruiters from job posts!")
+    st.subheader("Find recruiters from job posts to send your pitch!")
 
     job_url = st.text_input(
         "Job URL", placeholder="https://www.linkedin.com/jobs/view/4133654166"
     )
-    email_subject = st.text_input(
-        "Email subject", placeholder="I am a fit for this role."
-    )
-    email_body = st.text_input("Email body", placeholder="This is why.")
 
-    st.markdown(
-        "<p style='color: gray;'>No worries, we don’t store your data. "
-        "All information is only used during your session and isn’t saved anywhere.</p>",
-        unsafe_allow_html=True,
-    )
-
-    if st.button("Generate Email Links", type="primary"):
+    if st.button("Find Recruiters", type="primary"):
 
         if job_url:
             job_url = parse_linkedin_job_url(job_url)
