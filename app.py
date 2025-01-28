@@ -62,18 +62,19 @@ def main():
                     st.subheader("Company Information")
                     st.table(company.as_df())
 
-                    st.subheader("Company Emails")
-                    st.write(
-                        f"We scraped these emails from {company.domain}. "
-                        f"Hopefully they help you identify the correct email format."
-                    )
                     scraper = BingScraper()
                     emails = (
                         scraper.scrape_company_emails_from_domain(company.domain)
                         if cfg.ENV == "prod"
                         else ["email1@example.com", "email2@example.com"]
                     )
-                    st.table(pd.DataFrame(emails, columns=["email"]))
+                    if emails:
+                        st.subheader("Company Emails")
+                        st.write(
+                            f"We scraped these emails from {company.domain}. "
+                            f"Hopefully they help you identify the correct email format."
+                        )
+                        st.table(pd.DataFrame(emails, columns=["email"]))
 
                     st.subheader("Recruiters")
 
