@@ -2,7 +2,7 @@ from unittest import TestCase
 
 from parameterized import parameterized
 
-from recruiterblast.parsers import LinkedInURLParser
+from recruiterblast.parsers import parse_linkedin_job_url, parse_emails_from_text
 
 
 class ParserTest(TestCase):
@@ -25,7 +25,7 @@ class ParserTest(TestCase):
         ]
     )
     def test_parser_returns_match_for_valid_linkedn_urls(self, input_str: str):
-        actual = LinkedInURLParser.parse_linkedin_job_url(input_str)
+        actual = parse_linkedin_job_url(input_str)
         self.assertEqual("https://www.linkedin.com/jobs/view/4133654166", actual)
 
     @parameterized.expand(
@@ -41,5 +41,68 @@ class ParserTest(TestCase):
         ]
     )
     def test_parser_returns_empty_str_for_invalid_linkedin_urls(self, input_str: str):
-        actual = LinkedInURLParser.parse_linkedin_job_url(input_str)
+        actual = parse_linkedin_job_url(input_str)
         self.assertEqual("", actual)
+
+
+class EmailParserTest(TestCase):
+
+    @parameterized.expand(
+        [
+            # Valid email addresses
+            ("simple email", "test@example.com", ["test@example.com"]),
+            (
+                "email with subdomain",
+                "user.name@sub.domain.com",
+                ["user.name@sub.domain.com"],
+            ),
+            (
+                "email with special characters",
+                "user+name@example.co.uk",
+                ["user+name@example.co.uk"],
+            ),
+            (
+                "email with digits",
+                "user1234@example1234.com",
+                ["user1234@example1234.com"],
+            ),
+            (
+                "email with underscores",
+                "user_name@domain_name.com",
+                ["user_name@domain_name.com"],
+            ),
+            (
+                "email with hyphen",
+                "user-name@domain-name.com",
+                ["user-name@domain-name.com"],
+            ),
+            # Invalid email addresses
+            ("email without @", "username.domain.com", []),
+            ("email without domain", "username@.com", []),
+            ("email with invalid character", "username@domain!com", []),
+            ("email with double @", "username@@domain.com", []),
+            ("email with missing TLD", "username@domain", []),
+            # Multiple emails
+            (
+                "multiple valid emails",
+                "test@example.com and user+name@example.co.uk",
+                ["test@example.com", "user+name@example.co.uk"],
+            ),
+            # Email with newline and extra spaces
+            ("email with newline", "   test@example.com \n", ["test@example.com"]),
+            # Emails embedded in sentences
+            (
+                "email in sentence",
+                "Contact us at support@company.com for more info.",
+                ["support@company.com"],
+            ),
+            # Edge case: email with top-level domain of length 2
+            ("email with 2 letter TLD", "email@example.ae", ["email@example.ae"]),
+        ]
+    )
+    def test_parse_emails(self, name, text, expected_emails):
+        result = parse_emails_from_text(text)
+        self.assertEqual(
+            expected_emails,
+            result,
+        )

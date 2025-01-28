@@ -4,12 +4,15 @@ from urllib.parse import urlparse
 from nameparser import HumanName
 
 
-class LinkedInURLParser:
-    @staticmethod
-    def parse_linkedin_job_url(input_str):
-        pattern = r"https://www\.linkedin\.com/jobs/view/\d+"
-        matches = re.findall(pattern, input_str)
-        return matches[0] if matches else ""
+def parse_emails_from_text(text: str) -> list[str]:
+    email_pattern = r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._%-]+\.[a-zA-Z]{2,}"
+    return re.findall(email_pattern, text)
+
+
+def parse_linkedin_job_url(input_str: str) -> str:
+    pattern = r"https://www\.linkedin\.com/jobs/view/\d+"
+    matches = re.findall(pattern, input_str)
+    return matches[0] if matches else ""
 
 
 class LinkedinEmployeeAPIResponseParser:
