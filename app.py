@@ -1,11 +1,11 @@
 import traceback
 from urllib.parse import quote_plus
-import re
 
 import streamlit as st
 
 import recruiterblast.config as cfg
 from recruiterblast.logger import setup_logger
+from recruiterblast.parsers import LinkedInURLParser
 from recruiterblast.scrapers import LinkedInScraper
 
 log = setup_logger(__name__)
@@ -15,7 +15,9 @@ LINKEDIN_URL_REGEX = r"^(https?://)?(www\.)?linkedin\.com/(jobs|in|company)/"
 
 def main():
     st.title("Recruiter Blast 🚀")
-    st.subheader("Mass send your pitch to recruiters from job posts—fill out the details below!")
+    st.subheader(
+        "Mass send your pitch to recruiters from job posts!"
+    )
 
     job_url = st.text_input(
         "Job URL", placeholder="https://www.linkedin.com/jobs/view/4133654166"
@@ -34,7 +36,8 @@ def main():
     if st.button("Generate Email Links", type="primary"):
 
         if job_url:
-            if not re.match(LINKEDIN_URL_REGEX, job_url):
+            job_url = LinkedInURLParser.parse_linkedin_job_url(job_url)
+            if not job_url:
                 st.error(
                     "Please enter a valid LinkedIn URL (e.g., 'https://www.linkedin.com/jobs/view/4133654166')"
                 )

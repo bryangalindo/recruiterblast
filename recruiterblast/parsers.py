@@ -1,6 +1,15 @@
+import re
 from urllib.parse import urlparse
 
 from nameparser import HumanName
+
+
+class LinkedInURLParser:
+    @staticmethod
+    def parse_linkedin_job_url(input_str):
+        pattern = r"https://www\.linkedin\.com/jobs/view/\d+"
+        matches = re.findall(pattern, input_str)
+        return matches[0] if matches else ""
 
 
 class LinkedinEmployeeAPIResponseParser:
