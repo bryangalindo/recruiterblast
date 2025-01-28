@@ -7,20 +7,13 @@ import streamlit as st
 import recruiterblast.config as cfg
 from recruiterblast.logger import setup_logger
 from recruiterblast.parsers import LinkedInURLParser
-from recruiterblast.scrapers import LinkedInScraper, BingSearchScraper
+from recruiterblast.scrapers import (
+    LinkedInScraper,
+    BingSearchScraper,
+    GoogleSearchScraper,
+)
 
 log = setup_logger(__name__)
-
-
-def display_emails_in_table(emails: list[str]):
-    table_html = "<table style='width:100%; border-collapse: collapse;'>"
-    for email in emails:
-        table_html += (
-            f"<tr><td style='border: 1px solid #ddd; padding: 8px;'>{email}</td></tr>"
-        )
-    table_html += "</table>"
-
-    st.markdown(table_html, unsafe_allow_html=True)
 
 
 def main():
@@ -62,12 +55,21 @@ def main():
                     st.subheader("Company Information")
                     st.table(company.as_df())
 
-                    scraper = BingSearchScraper()
-                    emails = (
-                        scraper.scrape_emails_from_company_domain(company.domain)
-                        if cfg.ENV == "prod"
-                        else ["email1@example.com", "email2@example.com"]
-                    )
+                    if cfg.ENV != "prod":
+                        emails = ["email1@example.com", "email2@example.com"]
+                    else:
+                        bing_scraper = BingSearchScraper()
+                        bing_emails = bing_scraper.scrape_emails_from_company_domain(
+                            company.domain
+                        )
+                        google_scraper = GoogleSearchScraper()
+                        google_emails = (
+                            google_scraper.scrape_emails_from_company_domain(
+                                company.domain
+                            )
+                        )
+                        emails = set(bing_emails + google_emails)
+
                     if emails:
                         st.subheader("Company Emails")
                         st.write(
