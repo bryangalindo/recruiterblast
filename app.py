@@ -10,8 +10,6 @@ from recruiterblast.scrapers import LinkedInScraper
 
 log = setup_logger(__name__)
 
-LINKEDIN_URL_REGEX = r"^(https?://)?(www\.)?linkedin\.com/(jobs|in|company)/"
-
 
 def main():
     st.title("Recruiter Blast 🚀")
