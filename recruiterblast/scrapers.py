@@ -195,8 +195,8 @@ class LinkedInScraper(BaseScraper):
         return (self.generate_mock_company(), self.generate_mock_recruiters())
 
 
-class BingScraper:
-    def scrape_company_emails_from_domain(self, domain: str) -> list[str]:
+class BingSearchScraper:
+    def scrape_emails_from_company_domain(self, domain: str) -> list[str]:
         emails = set()
         results = self._search_bing(
             f'site:{domain} "@{domain}"',
@@ -220,4 +220,34 @@ class BingScraper:
             response = requests.get(
                 BING_SEARCH_API_URL, headers=headers, params={"q": query}
             )
+            return response.json() or {}
+
+
+class GoogleSearchScraper:
+    def scrape_emails_from_company_domain(self, domain: str) -> list[str]:
+        emails = set()
+        results = self._search_google(
+            f'site:{domain} "@{domain}"',
+        )
+        for item in results.get("items", []):
+            snippet = str(item["snippet"])
+            words = snippet.split()
+            for word in words:
+                if validators.email(word):
+                    emails.add(word)
+        return list(emails)
+
+    @retry(log)
+    def _search_google(self, query: str) -> dict:
+        with Timer(
+            log,
+            message=f"Time taken to process Google {query=}",
+            unit="milliseconds",
+        ):
+            params = {
+                "q": query,
+                "cx": cfg.GOOGLE_SEARCH_CUSTOM_SEARCH_ENGINE_ID,
+                "key": cfg.GOOGLE_SEARCH_API_KEY,
+            }
+            response = requests.get(BING_SEARCH_API_URL, params=params)
             return response.json() or {}
