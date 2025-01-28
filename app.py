@@ -7,7 +7,7 @@ import streamlit as st
 import recruiterblast.config as cfg
 from recruiterblast.logger import setup_logger
 from recruiterblast.parsers import LinkedInURLParser
-from recruiterblast.scrapers import LinkedInScraper, BingScraper
+from recruiterblast.scrapers import LinkedInScraper, BingSearchScraper
 
 log = setup_logger(__name__)
 
@@ -62,9 +62,9 @@ def main():
                     st.subheader("Company Information")
                     st.table(company.as_df())
 
-                    scraper = BingScraper()
+                    scraper = BingSearchScraper()
                     emails = (
-                        scraper.scrape_company_emails_from_domain(company.domain)
+                        scraper.scrape_emails_from_company_domain(company.domain)
                         if cfg.ENV == "prod"
                         else ["email1@example.com", "email2@example.com"]
                     )
