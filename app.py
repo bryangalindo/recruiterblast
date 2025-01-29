@@ -31,27 +31,6 @@ def display_company_email_search_button(domain: str):
     )
 
 
-def generate_email_formats_selections() -> list[str]:
-    separators = ["", ".", "_"]
-    email_permutations = ["All Permutations"]
-
-    for sep in separators:
-        email_permutations.extend(
-            [
-                f"[first]{sep}[last]@[domain].com",
-                f"[last]{sep}[first]@[domain].com",
-                f"[first_initial]{sep}[last]@[domain].com",
-                f"[first]{sep}[last_initial]@[domain].com",
-                f"[first_initial]{sep}[last_initial]@[domain].com",
-                f"[last]{sep}[first_initial]@[domain].com",
-                f"[last_initial]{sep}[first]@[domain].com",
-                f"[last_initial]{sep}[first_initial]@[domain].com",
-            ]
-        )
-
-    return email_permutations
-
-
 def main():
     st.set_page_config(page_title="RecruiterBlast.dev", page_icon="🚀")
 
