@@ -14,12 +14,13 @@ log = setup_logger(__name__)
 
 
 def generate_email_subject_and_body(
-    company: Company, recruiter: Employee, job_url: str
+    company: Company, recruiter: Employee, job_post: JobPost
 ) -> tuple[str, str]:
-    subject = "👋 I'm a 92.5% Fit for Your Software Engineer 2 Role!"
+    subject = f"👋 I'm 92.5% Fit for Your {job_post.title} Role!"
     body = (
         f"Hi {recruiter.first_name},\n\n"
-        f"I value your time, so I’ll keep this brief. My name is Bryan, and I recently applied for the Software Engineer 2 role at {company.name} [1]. "
+        f"I value your time, so I’ll keep this brief! My name is Bryan, and "
+        f"I recently applied for the {job_post.job_url} role at {company.name} [1]. "
         f"I noticed you're on the recruiting team, so I thought I’d reach out in case my "
         f"application gets lost in the shuffle.\n\n"
         f"Here’s a high-level overview of my experience:\n\n"
@@ -30,7 +31,7 @@ def generate_email_subject_and_body(
         f"   ➡️ Relevant tech I've worked with: Python, Flask, SQL, DBT, Airflow, AWS\n\n"
         f"I’ve attached and included a link to my resume below if you’re interested in chatting [2]. "
         f"I look forward to hearing from you. Thanks!\n\n"
-        f"[1]: {job_url}\n"
+        f"[1]: {job_post.job_url}\n"
         f"[2]: bryangalindo.com/resume"
     )
     subject_encoded = quote_plus(subject).replace("+", "%20")
@@ -81,6 +82,7 @@ def main():
                             location="Houston",
                         )
                     )
+                    job_post.job_url = job_url
                     st.subheader("Job Post Information")
                     st.table(job_post.as_df())
 
@@ -116,7 +118,7 @@ def main():
 
                     for recruiter in recruiters:
                         subject, body = generate_email_subject_and_body(
-                            company, recruiter, job_url
+                            company, recruiter, job_post
                         )
                         if email_format:
                             emails = [
