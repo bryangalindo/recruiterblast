@@ -20,7 +20,7 @@ def generate_email_subject_and_body(
     body = (
         f"Hi {recruiter.first_name},\n\n"
         f"I value your time, so I’ll keep this brief! My name is Bryan, and "
-        f"I recently applied for the {job_post.job_url} role at {company.name} [1]. "
+        f"I recently applied for the {job_post.title} role at {company.name} [1]. "
         f"I noticed you're on the recruiting team, so I thought I’d reach out in case my "
         f"application gets lost in the shuffle.\n\n"
         f"Here’s a high-level overview of my experience:\n\n"
