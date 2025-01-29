@@ -6,8 +6,9 @@ import streamlit as st
 import recruiterblast.config as cfg
 from recruiterblast.logger import setup_logger
 from recruiterblast.models import Company, Employee
-from recruiterblast.parsers import parse_linkedin_job_url
+from recruiterblast.parsers import parse_linkedin_job_url, parse_emails_from_text
 from recruiterblast.scrapers import GoogleSearchScraper, LinkedInScraper
+from recruiterblast.utils import generate_formatted_employee_email
 
 log = setup_logger(__name__)
 
@@ -94,9 +95,12 @@ def main():
                             google_scraper.scrape_suggested_email_format(company.domain)
                         )
 
+                    email_format = None
+
                     if suggested_email_format:
                         st.subheader("Email Format")
                         st.write(f"Per LeadIQ.com: {suggested_email_format}")
+                        email_format = parse_emails_from_text(suggested_email_format)
 
                     st.subheader("Recruiters")
 
@@ -104,7 +108,16 @@ def main():
                         subject, body = generate_email_subject_and_body(
                             company, recruiter, job_url
                         )
-                        emails = recruiter.generate_email_permutations(company.domain)
+                        if email_format:
+                            emails = [
+                                generate_formatted_employee_email(
+                                    recruiter, email_format[0]
+                                )
+                            ]
+                        else:
+                            emails = recruiter.generate_email_permutations(
+                                company.domain
+                            )
 
                         with st.container():
                             st.markdown(
