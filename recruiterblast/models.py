@@ -34,3 +34,11 @@ class Employee:
 
     def generate_email_permutations(self, domain: str) -> set[str]:
         return generate_email_permutations(self.first_name, self.last_name, domain)
+
+
+@dataclass
+class JobPost:
+    id: int = None
+    title: str = None
+    description: str = None
+    post_date: str = None
