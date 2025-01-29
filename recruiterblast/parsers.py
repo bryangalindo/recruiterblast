@@ -1,4 +1,5 @@
 import re
+import json
 
 import tldextract
 from nameparser import HumanName
@@ -14,6 +15,27 @@ def parse_linkedin_job_url(input_str: str) -> str:
     pattern = r"https://www\.linkedin\.com/jobs/view/\d+"
     matches = re.findall(pattern, input_str)
     return matches[0] if matches else ""
+
+
+def safe_parse_dict_from_json_str(json_str: str) -> dict:
+    try:
+        return json.loads(json_str)
+    except json.JSONDecodeError as e:
+        return {}
+
+
+class GoogleGeminiAPIResponseParser:
+    def __init__(self, response: dict):
+        self.response = response
+
+    def get_response_text(self):
+        candidates = self.response.get("candidates", [])
+        if not candidates:
+            return ""
+        content_parts = candidates[0].get("content", {}).get("parts", [])
+        if not content_parts:
+            return ""
+        return content_parts[0].get("text", "")
 
 
 class LinkedInJobPostAPIResponseParser:

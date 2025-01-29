@@ -40,3 +40,15 @@ MOCK_GOOGLE_SEARCH_API_EMAIL_FORMAT_RESPONSE = {
         }
     ]
 }
+
+MOCK_GOOGLE_GEMINI_API_RESPONSE = {
+    "candidates": [
+        {
+            "content": {
+                "parts": [
+                    {"text": '{"Technologies": ["SQL", "Python", "Typescript"]}'}
+                ],
+            },
+        }
+    ]
+}

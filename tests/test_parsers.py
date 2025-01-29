@@ -3,12 +3,14 @@ from unittest import TestCase
 from parameterized import parameterized
 
 from recruiterblast.parsers import (
+    GoogleGeminiAPIResponseParser,
     LinkedInJobPostAPIResponseParser,
     LinkedinCompanyAPIResponseParser,
     parse_emails_from_text,
     parse_linkedin_job_url,
 )
 from recruiterblast.utils import iso_to_utc_timestamp
+from constants import MOCK_GOOGLE_GEMINI_API_RESPONSE
 
 
 class ParserTest(TestCase):
@@ -179,3 +181,10 @@ class TestLinkedInJobPostAPIResponseParser(TestCase):
     def test_get_apply_url_no_url(self):
         self.mock_response["data"]["applyMethod"] = {}
         self.assertEqual(self.parser.get_apply_url(), "")
+
+
+class TestGoogleGeminiAPIResponseParser(TestCase):
+    def test_get_response_text(self):
+        parser = GoogleGeminiAPIResponseParser(MOCK_GOOGLE_GEMINI_API_RESPONSE)
+        actual = parser.get_response_text()
+        self.assertEqual('{"Technologies": ["SQL", "Python", "Typescript"]}', actual)

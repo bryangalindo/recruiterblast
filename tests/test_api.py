@@ -1,0 +1,13 @@
+from unittest import TestCase, mock
+from recruiterblast.api import GoogleGeminiAPIClient
+from constants import MOCK_GOOGLE_GEMINI_API_RESPONSE
+
+
+class TestGoogleGeminiAPIClient(TestCase):
+    @mock.patch.object(GoogleGeminiAPIClient, "_make_request")
+    def test_parse_skills_from_job_description(self, mock_request):
+        mock_request.return_value = MOCK_GOOGLE_GEMINI_API_RESPONSE
+        client = GoogleGeminiAPIClient()
+        expected = {"Technologies": ["SQL", "Python", "Typescript"]}
+        actual = client.parse_skills_from_job_description("foobar")
+        self.assertEqual(expected, actual)

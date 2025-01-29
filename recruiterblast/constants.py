@@ -1,4 +1,5 @@
 GOOGLE_SEARCH_API_URL = "https://customsearch.googleapis.com/customsearch/v1"
+GOOGLE_GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/{llm_model}:generateContent"
 LINKEDIN_JOB_POST_API_URL = (
     "https://www.linkedin.com/voyager/api/jobs/jobPostings/{job_id}"
     "?decorationId=com.linkedin.voyager.deco.jobs.web.shared.WebFullJobPosting-65&"
