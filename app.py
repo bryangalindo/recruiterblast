@@ -4,6 +4,7 @@ from urllib.parse import quote_plus
 import streamlit as st
 
 import recruiterblast.config as cfg
+from recruiterblast.api import GoogleGeminiAPIClient
 from recruiterblast.logger import setup_logger
 from recruiterblast.models import Company, Employee, JobPost
 from recruiterblast.parsers import parse_emails_from_text, parse_linkedin_job_url
@@ -75,13 +76,21 @@ def main():
                         else JobPost(
                             id=1,
                             title="SWE",
-                            description="You will work for money",
+                            description="You will work for money. Python.",
                             post_date="2024-01-01T12:12:12",
                             apply_url="foobar.com",
                             is_remote=True,
                             location="Houston",
                         )
                     )
+                    client = GoogleGeminiAPIClient()
+                    skills = (
+                        client.parse_skills_from_job_description(job_post.description)
+                        if cfg.IS_PROD
+                        else {"technologies": ["Python"]}
+                    )
+
+                    job_post.skills = skills.get("technologies")
                     job_post.job_url = job_url
                     st.subheader("Job Post Information")
                     st.table(job_post.as_df())
