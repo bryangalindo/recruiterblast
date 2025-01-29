@@ -1,4 +1,10 @@
 GOOGLE_SEARCH_API_URL = "https://customsearch.googleapis.com/customsearch/v1"
+LINKEDIN_JOB_POST_API_URL = (
+    "https://www.linkedin.com/voyager/api/jobs/jobPostings/{job_id}"
+    "?decorationId=com.linkedin.voyager.deco.jobs.web.shared.WebFullJobPosting-65&"
+    "topN=1&"
+    "topNRequestedFlavors=List(TOP_APPLICANT,IN_NETWORK,COMPANY_RECRUIT,SCHOOL_RECRUIT,HIDDEN_GEM,ACTIVELY_HIRING_COMPANY)"
+)
 LINKEDIN_COMPANY_ENTITY_API_URL = (
     "https://www.linkedin.com/voyager/api/entities/companies/{company_id}"
 )

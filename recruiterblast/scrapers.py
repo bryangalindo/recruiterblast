@@ -9,13 +9,15 @@ from recruiterblast.constants import (
     LINKEDIN_API_HEADERS,
     LINKEDIN_COMPANY_API_URL,
     LINKEDIN_COMPANY_ENTITY_API_URL,
+    LINKEDIN_JOB_POST_API_URL,
     LINKEDIN_EMPLOYEE_API_URL,
 )
 from recruiterblast.logger import setup_logger
-from recruiterblast.models import Company, Employee
+from recruiterblast.models import Company, Employee, JobPost
 from recruiterblast.parsers import (
     LinkedinCompanyAPIResponseParser,
     LinkedinEmployeeAPIResponseParser,
+    LinkedInJobPostAPIResponseParser,
     parse_emails_from_text,
 )
 from recruiterblast.utils import (
@@ -41,6 +43,26 @@ class LinkedInScraper(BaseScraper):
         self.job_post_url = job_post_url
         self.headers = LINKEDIN_API_HEADERS
         self._update_auth_headers()
+        self.job_id = self._parse_job_id_from_job_post_url(job_post_url)
+
+    def fetch_job_post_details(self) -> JobPost:
+        log.info(f"Starting to fetch job post details...")
+        job_post = JobPost()
+
+        data = self._fetch_job_post_details()
+        parser = LinkedInJobPostAPIResponseParser(data)
+
+        job_post.id = self.job_id
+        job_post.title = parser.get_title()
+        job_post.description = parser.get_description()
+        job_post.post_date = parser.get_post_date()
+        job_post.location = parser.get_location()
+        job_post.is_remote = parser.get_is_remote()
+        job_post.apply_url = parser.get_apply_url()
+
+        log.info(f"Successfully fetched {job_post=}")
+
+        return job_post
 
     def fetch_company_from_job_post(self) -> Company:
         log.info(f"Starting to fetch company details from {self.job_post_url=}...")
@@ -48,8 +70,7 @@ class LinkedInScraper(BaseScraper):
         company = Company()
         parser = LinkedinCompanyAPIResponseParser()
 
-        job_id = self._parse_job_id_from_job_post_url(self.job_post_url)
-        data = self._fetch_company_from_job_post(job_id)
+        data = self._fetch_company_from_job_post(self.job_id)
 
         company.name = parser.get_company_name(data)
         company.id = parser.get_company_id(data)
@@ -103,6 +124,19 @@ class LinkedInScraper(BaseScraper):
         company = self.fetch_company_from_job_post()
         recruiters = self.fetch_recruiters_from_company(company)
         return company, recruiters
+
+    @retry(log)
+    def _fetch_job_post_details(self) -> dict:
+        self._update_user_agent_header()
+        url = LINKEDIN_JOB_POST_API_URL.format(job_id=self.job_id)
+        with Timer(
+            log,
+            message=f"Time taken to fetch job post from {url=}",
+            unit="milliseconds",
+        ):
+            response = requests.get(url, headers=LINKEDIN_API_HEADERS)
+        sleep_for_random_n_seconds(log, min_seconds=1, max_seconds=5)
+        return response.json()
 
     @retry(log)
     def _fetch_company_from_job_post(self, job_id: int) -> dict:
@@ -246,8 +280,9 @@ class GoogleSearchScraper:
 
 if __name__ == "__main__":
     pass
-    # job_url = 'https://www.linkedin.com/jobs/view/4133654166'
+    # job_url = "https://www.linkedin.com/jobs/view/4133654166"
     # scraper = LinkedInScraper(job_url)
+    # scraper.fetch_job_post_details()
     # company = scraper.fetch_company_from_job_post()
     # google_scraper = GoogleSearchScraper()
     # google_emails = (
