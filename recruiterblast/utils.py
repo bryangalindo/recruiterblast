@@ -10,21 +10,24 @@ from recruiterblast.constants import USER_AGENTS
 def generate_email_permutations(
     first_name: str, last_name: str, domain: str
 ) -> set[str]:
-    separators = ["", "."]
+    separators = ["", ".", "_"]
     emails = set()
 
     emails.add(f"{first_name}@{domain}")
     emails.add(f"{last_name}@{domain}")
 
+    first_initial = first_name[0] if first_name else ""
+    last_initial = last_name[0] if last_name else ""
+
     for sep in separators:
         emails.add(f"{first_name}{sep}{last_name}@{domain}")
         emails.add(f"{last_name}{sep}{first_name}@{domain}")
-        emails.add(f"{first_name[0]}{sep}{last_name}@{domain}")
-        emails.add(f"{first_name}{sep}{last_name[0]}@{domain}")
-        emails.add(f"{first_name[0]}{sep}{last_name[0]}@{domain}")
-        emails.add(f"{last_name}{sep}{first_name[0]}@{domain}")
-        emails.add(f"{last_name[0]}{sep}{first_name}@{domain}")
-        emails.add(f"{last_name[0]}{sep}{first_name[0]}@{domain}")
+        emails.add(f"{first_initial}{sep}{last_name}@{domain}")
+        emails.add(f"{first_name}{sep}{last_initial}@{domain}")
+        emails.add(f"{first_initial}{sep}{last_initial}@{domain}")
+        emails.add(f"{last_name}{sep}{first_initial}@{domain}")
+        emails.add(f"{last_initial}{sep}{first_name}@{domain}")
+        emails.add(f"{last_initial}{sep}{first_initial}@{domain}")
 
     return emails
 
