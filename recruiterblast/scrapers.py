@@ -248,6 +248,18 @@ class GoogleSearchScraper:
                 log.info(f"Successfully scraped {i=}, {email=}...")
         return list(scraped_emails)
 
+    def scrape_suggested_email_format(self, domain: str) -> str:
+        results = self._search_google(
+            f'site:leadiq.com "@{domain}"',
+        )
+        search_results = results.get("items", [])
+        log.info(f"Starting to parse {len(search_results)} search results...")
+        for i, item in enumerate(search_results):
+            snippet = str(item.get("snippet", ""))
+            log.debug(f"Parsing formats from {i=} {snippet=}...")
+            if "email format typically follows" in snippet.lower():
+                return snippet.split("Other contacts")[0].strip()
+
     @retry(log)
     def _search_google(self, query: str) -> dict:
         with Timer(

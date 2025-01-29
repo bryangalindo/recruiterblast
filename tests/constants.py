@@ -38,3 +38,14 @@ MOCK_GOOGLE_SEARCH_API_RESPONSE = {
         }
     ]
 }
+
+MOCK_GOOGLE_SEARCH_API_EMAIL_FORMAT_RESPONSE = {
+    "items": [
+        {
+            "snippet": (
+                "The FooBar's email format typically follows the pattern of First_Last@foobar.com; "
+                "this email format is used 95% of the time. Other contacts within ..."
+            ),
+        }
+    ]
+}
