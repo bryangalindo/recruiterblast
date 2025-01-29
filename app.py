@@ -16,8 +16,23 @@ log = setup_logger(__name__)
 def generate_email_subject_and_body(
     company: Company, recruiter: Employee, job_url: str
 ) -> tuple[str, str]:
-    subject = f"I am interested in {company.name}'s Software Engineer Role."
-    body = f"Hello {recruiter.first_name},\nI just applied to {job_url}, and I think we're a fit."
+    subject = "👋 I'm a 92.5% Fit for Your Software Engineer 2 Role!"
+    body = (
+        f"Hi {recruiter.first_name},\n\n"
+        f"I value your time, so I’ll keep this brief. My name is Bryan, and I recently applied for the Software Engineer 2 role at {company.name} [1]. "
+        f"I noticed you're on the recruiting team, so I thought I’d reach out in case my "
+        f"application gets lost in the shuffle.\n\n"
+        f"Here’s a high-level overview of my experience:\n\n"
+        f"   ➡️ 4+ years as a backend software engineer\n"
+        f"   ➡️ Previously at Bank of America (BofA)\n"
+        f"   ➡️ Saved BofA $221K by resolving a memory leak\n"
+        f"   ➡️ Boosted a vintage store's sales by 31% with BigBagData.com\n"
+        f"   ➡️ Relevant tech I've worked with: Python, Flask, SQL, DBT, Airflow, AWS\n\n"
+        f"I’ve attached and included a link to my resume below if you’re interested in chatting [2]. "
+        f"I look forward to hearing from you. Thanks!\n\n"
+        f"[1]: {job_url}\n"
+        f"[2]: bryangalindo.com/resume"
+    )
     subject_encoded = quote_plus(subject).replace("+", "%20")
     body_encoded = quote_plus(body).replace("+", "%20")
     return subject_encoded, body_encoded
@@ -103,7 +118,7 @@ def main():
                                 f"<div style='border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 15px;'>"
                                 f"<strong>{recruiter.full_name}</strong> | {recruiter.locale} | "
                                 f"<a href='{recruiter.profile_url}' target='_blank'>Profile</a> | "
-                                f"<a href='mailto:{','.join(emails)}?subject={subject}&body={body}'>Send Email</a>"
+                                f"<a href='https://mail.google.com/mail/?view=cm&fs=1&to={','.join(emails)}&su={subject}&body={body}' target='_blank'>Send Email</a>"
                                 f"<br><em>{recruiter.headline}</em>"
                                 f"</div>",
                                 unsafe_allow_html=True,
