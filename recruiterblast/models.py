@@ -42,3 +42,4 @@ class JobPost:
     title: str = None
     description: str = None
     post_date: str = None
+    apply_url: str = None
