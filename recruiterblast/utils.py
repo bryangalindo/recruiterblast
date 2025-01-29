@@ -3,8 +3,16 @@ import functools
 import random
 import time
 import traceback
+import datetime
 
 from recruiterblast.constants import USER_AGENTS
+
+
+def iso_to_utc_timestamp(iso_timestamp_ms: int) -> str:
+    utc_timestamp = datetime.datetime.fromtimestamp(
+        iso_timestamp_ms / 1000, tz=datetime.timezone.utc
+    )
+    return utc_timestamp.isoformat()
 
 
 def generate_formatted_employee_email(employee, format: str) -> str:
