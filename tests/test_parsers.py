@@ -3,10 +3,12 @@ from unittest import TestCase
 from parameterized import parameterized
 
 from recruiterblast.parsers import (
+    LinkedInJobPostAPIResponseParser,
     LinkedinCompanyAPIResponseParser,
     parse_emails_from_text,
     parse_linkedin_job_url,
 )
+from recruiterblast.utils import iso_to_utc_timestamp
 
 
 class ParserTest(TestCase):
@@ -118,3 +120,62 @@ class TestLinkedinCompanyAPIResponseParser(TestCase):
         expected = "gitlab.com"
         actual = LinkedinCompanyAPIResponseParser.get_domain(data)
         self.assertEqual(expected, actual)
+
+
+class TestLinkedInJobPostAPIResponseParser(TestCase):
+
+    def setUp(self):
+        """Create mock responses for testing."""
+        self.mock_response = {
+            "data": {
+                "formattedLocation": "New York, NY",
+                "originalListedAt": 1737739491000,  # Sample timestamp
+                "workRemoteAllowed": True,
+                "applyMethod": {
+                    "easyApplyUrl": "https://www.linkedin.com/jobs/easy-apply/123456",
+                    "companyApplyUrl": "https://www.company.com/apply",
+                },
+                "title": "Software Engineer 2",
+                "description": {
+                    "text": "We are looking for a talented software engineer."
+                },
+            }
+        }
+        self.parser = LinkedInJobPostAPIResponseParser(self.mock_response)
+
+    def test_get_location(self):
+        location = self.parser.get_location()
+        self.assertEqual("New York, NY", location)
+
+    def test_get_post_date(self):
+        expected_utc_date = iso_to_utc_timestamp(1737739491000)
+        post_date = self.parser.get_post_date()
+        self.assertEqual(expected_utc_date, post_date)
+
+    def test_get_is_remote(self):
+        self.assertTrue(self.parser.get_is_remote())
+
+    def test_get_apply_url_easy_apply(self):
+        apply_url = self.parser.get_apply_url()
+        self.assertEqual("https://www.linkedin.com/jobs/easy-apply/123456", apply_url)
+
+    def test_get_apply_url_company_apply(self):
+        self.mock_response["data"]["applyMethod"] = {
+            "companyApplyUrl": "https://www.company.com/apply"
+        }
+        apply_url = self.parser.get_apply_url()
+        self.assertEqual("https://www.company.com/apply", apply_url)
+
+    def test_get_title(self):
+        title = self.parser.get_title()
+        self.assertEqual("Software Engineer 2", title)
+
+    def test_get_description(self):
+        description = self.parser.get_description()
+        self.assertEqual(
+            "We are looking for a talented software engineer.", description
+        )
+
+    def test_get_apply_url_no_url(self):
+        self.mock_response["data"]["applyMethod"] = {}
+        self.assertEqual(self.parser.get_apply_url(), "")

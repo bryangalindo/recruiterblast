@@ -2,6 +2,7 @@ import re
 
 import tldextract
 from nameparser import HumanName
+from recruiterblast.utils import iso_to_utc_timestamp
 
 
 def parse_emails_from_text(text: str) -> list[str]:
@@ -13,6 +14,32 @@ def parse_linkedin_job_url(input_str: str) -> str:
     pattern = r"https://www\.linkedin\.com/jobs/view/\d+"
     matches = re.findall(pattern, input_str)
     return matches[0] if matches else ""
+
+
+class LinkedInJobPostAPIResponseParser:
+    def __init__(self, response: dict):
+        self.response = response
+
+    def get_location(self) -> str:
+        return self.response.get("data", {}).get("formattedLocation", "")
+
+    def get_post_date(self) -> str:
+        timestamp = self.response.get("data", {}).get("originalListedAt", 0)
+        return iso_to_utc_timestamp(timestamp)
+
+    def get_is_remote(self) -> bool:
+        return self.response.get("data", {}).get("workRemoteAllowed", False)
+
+    def get_apply_url(self) -> str:
+        apply_method = self.response.get("data", {}).get("applyMethod", {})
+        url = apply_method.get("easyApplyUrl") or apply_method.get("companyApplyUrl")
+        return url or ""
+
+    def get_title(self) -> str:
+        return self.response.get("data", {}).get("title", "")
+
+    def get_description(self) -> str:
+        return self.response.get("data", {}).get("description", {}).get("text", "")
 
 
 class LinkedinEmployeeAPIResponseParser:
