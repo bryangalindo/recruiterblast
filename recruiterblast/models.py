@@ -1,4 +1,4 @@
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 
 import pandas as pd
 
@@ -46,6 +46,7 @@ class JobPost:
     location: str = None
     description: str = None
     job_url: str = None
+    skills: list = field(default_factory=list)
 
     def as_df(self):
         data = {
