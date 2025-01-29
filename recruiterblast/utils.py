@@ -13,41 +13,19 @@ def generate_formatted_employee_email(employee, format: str) -> str:
     domain = email_parts[1].lower()
     username = email_parts[0].lower()
 
-    found_first_name = False
-    found_last_name = False
-    found_first_initial = False
-    found_last_initial = False
+    username = username.replace("first", "%")
+    username = username.replace("last", "#")
+    username = username.replace("f", "^")
+    username = username.replace("l", ">")
 
-    if "first" in username:
-        username = username.replace("first", "%")
-        found_first_name = True
-    if "last" in username:
-        username = username.replace("last", "#")
-        found_last_name = True
-    if "f" in username:
-        username = username.replace("f", "^")
-        found_first_initial = True
-    if "l" in username:
-        username = username.replace("l", ">")
-        found_last_initial = True
-
-    if not any(
-        [found_first_name, found_last_name, found_first_initial, found_last_initial]
-    ):
-        return ""
-
-    if "%" in username:
-        username = username.replace("%", employee.first_name)
-    if "#" in username:
-        username = username.replace("#", employee.last_name)
-    if "^" in username:
-        username = username.replace(
-            "^", employee.first_name[0] if employee.first_name else ""
-        )
-    if ">" in username:
-        username = username.replace(
-            ">", employee.last_name[0] if employee.last_name else ""
-        )
+    username = username.replace("%", employee.first_name)
+    username = username.replace("#", employee.last_name)
+    username = username.replace(
+        "^", employee.first_name[0] if employee.first_name else ""
+    )
+    username = username.replace(
+        ">", employee.last_name[0] if employee.last_name else ""
+    )
 
     return f"{username}@{domain}"
 
