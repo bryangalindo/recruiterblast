@@ -45,3 +45,10 @@ class JobPost:
     apply_url: str = None
     is_remote: bool = None
     location: str = None
+
+    def as_df(self):
+        data = {
+            "Field": list(asdict(self).keys()),
+            "Details": list(asdict(self).values()),
+        }
+        return pd.DataFrame(data)
