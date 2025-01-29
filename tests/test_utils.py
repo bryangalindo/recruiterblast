@@ -1,8 +1,9 @@
 from unittest import TestCase, mock
+
 from parameterized import parameterized
 
-from recruiterblast.utils import generate_formatted_employee_email
 from recruiterblast.models import Employee
+from recruiterblast.utils import generate_formatted_employee_email
 
 
 class UtilsTest(TestCase):

@@ -6,7 +6,7 @@ import streamlit as st
 import recruiterblast.config as cfg
 from recruiterblast.logger import setup_logger
 from recruiterblast.models import Company, Employee
-from recruiterblast.parsers import parse_linkedin_job_url, parse_emails_from_text
+from recruiterblast.parsers import parse_emails_from_text, parse_linkedin_job_url
 from recruiterblast.scrapers import GoogleSearchScraper, LinkedInScraper
 from recruiterblast.utils import generate_formatted_employee_email
 
