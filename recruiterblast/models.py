@@ -43,3 +43,4 @@ class JobPost:
     description: str = None
     post_date: str = None
     apply_url: str = None
+    is_remote: bool = None
