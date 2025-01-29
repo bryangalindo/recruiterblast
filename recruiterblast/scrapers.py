@@ -255,5 +255,4 @@ if __name__ == "__main__":
     #         company.domain
     #     )
     # )
-    # emails = set(bing_emails + google_emails)
-    # print(emails)
+    # print(google_emails)
