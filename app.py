@@ -5,7 +5,7 @@ import streamlit as st
 
 import recruiterblast.config as cfg
 from recruiterblast.logger import setup_logger
-from recruiterblast.models import Company, Employee
+from recruiterblast.models import Company, Employee, JobPost
 from recruiterblast.parsers import parse_emails_from_text, parse_linkedin_job_url
 from recruiterblast.scrapers import GoogleSearchScraper, LinkedInScraper
 from recruiterblast.utils import generate_formatted_employee_email
@@ -67,6 +67,22 @@ def main():
             else:
                 try:
                     scraper = LinkedInScraper(job_url)
+
+                    job_post = (
+                        scraper.fetch_job_post_details()
+                        if cfg.ENV == "prod"
+                        else JobPost(
+                            id=1,
+                            title="SWE",
+                            description="You will work for money",
+                            post_date="2024-01-01T12:12:12",
+                            apply_url="foobar.com",
+                            is_remote=True,
+                            location="Houston",
+                        )
+                    )
+                    st.subheader("Job Post Information")
+                    st.table(job_post.as_df())
 
                     company, recruiters = (
                         scraper.generate_mock_company_recruiter_data()
