@@ -49,8 +49,8 @@ class LinkedInScraper(BaseScraper):
         log.info(f"Starting to fetch job post details...")
         job_post = JobPost()
 
-        data = self._fetch_job_post_details()
-        parser = LinkedInJobPostAPIResponseParser(data)
+        response = self._fetch_job_post_details()
+        parser = LinkedInJobPostAPIResponseParser(response)
 
         job_post.id = self.job_id
         job_post.title = parser.get_title()
