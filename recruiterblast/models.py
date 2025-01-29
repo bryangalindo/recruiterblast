@@ -45,6 +45,7 @@ class JobPost:
     is_remote: bool = None
     location: str = None
     description: str = None
+    job_url: str = None
 
     def as_df(self):
         data = {
