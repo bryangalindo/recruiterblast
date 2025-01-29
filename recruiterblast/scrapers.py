@@ -196,41 +196,6 @@ class LinkedInScraper(BaseScraper):
         return (self.generate_mock_company(), self.generate_mock_recruiters())
 
 
-class BingSearchScraper:
-    def scrape_emails_from_company_domain(self, domain: str) -> list[str]:
-        scraped_emails = set()
-        results = self._search_bing(
-            f'site:{domain} "@{domain}"',
-        )
-        search_results = results.get("webPages", {}).get("value", [])
-        log.info(f"Starting to parse {len(search_results)} search results...")
-        for i, item in enumerate(search_results):
-            snippet = str(item["snippet"])
-            log.debug(f"Parsing emails from {i=} {snippet=}...")
-            emails = parse_emails_from_text(snippet)
-            for email in emails:
-                scraped_emails.add(email)
-                log.info(f"Successfully scraped {i=}, {email=}...")
-        return list(scraped_emails)
-
-    @retry(log)
-    def _search_bing(self, query: str) -> dict:
-        with Timer(
-            log,
-            message=f"Time taken to process Bing {query=}",
-            unit="milliseconds",
-        ):
-            headers = {"Ocp-Apim-Subscription-Key": cfg.BING_SEARCH_API_KEY}
-            response = requests.get(
-                BING_SEARCH_API_URL, headers=headers, params={"q": query}
-            )
-            data = response.json()
-            log.debug(
-                f"Successfully received response {response.status_code} from {response.url} with {data=}"
-            )
-            return data or {}
-
-
 class GoogleSearchScraper:
     def scrape_emails_from_company_domain(self, domain: str) -> list[str]:
         scraped_emails = set()
@@ -285,10 +250,6 @@ if __name__ == "__main__":
     # job_url = 'https://www.linkedin.com/jobs/view/4133654166'
     # scraper = LinkedInScraper(job_url)
     # company = scraper.fetch_company_from_job_post()
-    # bing_scraper = BingSearchScraper()
-    # bing_emails = bing_scraper.scrape_emails_from_company_domain(
-    #     company.domain
-    # )
     # google_scraper = GoogleSearchScraper()
     # google_emails = (
     #     google_scraper.scrape_emails_from_company_domain(

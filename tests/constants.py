@@ -22,15 +22,6 @@ MOCK_COMPANY_ENTITY_API_RESPONSE = {
     },
     "included": [],
 }
-MOCK_BING_SEARCH_API_RESPONSE = {
-    "webPages": {
-        "value": [
-            {
-                "snippet": "Reach out at foo@bar.com",
-            }
-        ]
-    }
-}
 MOCK_GOOGLE_SEARCH_API_RESPONSE = {
     "items": [
         {

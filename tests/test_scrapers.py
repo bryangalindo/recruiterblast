@@ -1,7 +1,6 @@
 from unittest import TestCase, mock
 
 from constants import (
-    MOCK_BING_SEARCH_API_RESPONSE,
     MOCK_COMPANY_API_RESPONSE,
     MOCK_COMPANY_ENTITY_API_RESPONSE,
     MOCK_GOOGLE_SEARCH_API_EMAIL_FORMAT_RESPONSE,
@@ -10,7 +9,6 @@ from constants import (
 
 from recruiterblast.models import Company
 from recruiterblast.scrapers import (
-    BingSearchScraper,
     GoogleSearchScraper,
     LinkedInScraper,
 )
@@ -35,26 +33,6 @@ class LinkedInScraperTest(TestCase):
         actual = scraper.fetch_company_from_job_post()
 
         self.assertEqual(expected, actual)
-
-
-class BingSearchScraperTest(TestCase):
-    @mock.patch.object(BingSearchScraper, "_search_bing")
-    def test_bing_scraper_returns_valid_emails(self, mock_search):
-        mock_search.return_value = MOCK_BING_SEARCH_API_RESPONSE
-        scraper = BingSearchScraper()
-
-        emails = scraper.scrape_emails_from_company_domain("bar.com")
-
-        self.assertEqual("foo@bar.com", emails[0])
-
-    @mock.patch.object(BingSearchScraper, "_search_bing")
-    def test_bing_scraper_returns_empty_list_if_response_empty(self, mock_search):
-        mock_search.return_value = {}
-        scraper = BingSearchScraper()
-
-        emails = scraper.scrape_emails_from_company_domain("bar.com")
-
-        self.assertEqual([], emails)
 
 
 class GoogleSearchScraperTest(TestCase):
