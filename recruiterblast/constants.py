@@ -1,4 +1,3 @@
-BING_SEARCH_API_URL = "https://api.bing.microsoft.com/v7.0/search"
 GOOGLE_SEARCH_API_URL = "https://customsearch.googleapis.com/customsearch/v1"
 LINKEDIN_COMPANY_ENTITY_API_URL = (
     "https://www.linkedin.com/voyager/api/entities/companies/{company_id}"
