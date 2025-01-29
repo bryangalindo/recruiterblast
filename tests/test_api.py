@@ -1,6 +1,8 @@
 from unittest import TestCase, mock
-from recruiterblast.api import GoogleGeminiAPIClient
+
 from constants import MOCK_GOOGLE_GEMINI_API_RESPONSE
+
+from recruiterblast.api import GoogleGeminiAPIClient
 
 
 class TestGoogleGeminiAPIClient(TestCase):

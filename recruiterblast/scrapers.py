@@ -9,8 +9,8 @@ from recruiterblast.constants import (
     LINKEDIN_API_HEADERS,
     LINKEDIN_COMPANY_API_URL,
     LINKEDIN_COMPANY_ENTITY_API_URL,
-    LINKEDIN_JOB_POST_API_URL,
     LINKEDIN_EMPLOYEE_API_URL,
+    LINKEDIN_JOB_POST_API_URL,
 )
 from recruiterblast.logger import setup_logger
 from recruiterblast.models import Company, Employee, JobPost

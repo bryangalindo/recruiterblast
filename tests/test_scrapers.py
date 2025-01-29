@@ -8,10 +8,7 @@ from constants import (
 )
 
 from recruiterblast.models import Company
-from recruiterblast.scrapers import (
-    GoogleSearchScraper,
-    LinkedInScraper,
-)
+from recruiterblast.scrapers import GoogleSearchScraper, LinkedInScraper
 
 
 class LinkedInScraperTest(TestCase):

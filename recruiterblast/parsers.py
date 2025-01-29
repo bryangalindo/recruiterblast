@@ -1,8 +1,9 @@
-import re
 import json
+import re
 
 import tldextract
 from nameparser import HumanName
+
 from recruiterblast.utils import iso_to_utc_timestamp
 
 

@@ -3,7 +3,6 @@ import functools
 import random
 import time
 import traceback
-import datetime
 
 from recruiterblast.constants import USER_AGENTS
 

@@ -1,8 +1,8 @@
 import requests
 
 import recruiterblast.config as cfg
-from recruiterblast.logger import setup_logger
 from recruiterblast.constants import GOOGLE_GEMINI_API_URL
+from recruiterblast.logger import setup_logger
 from recruiterblast.parsers import (
     GoogleGeminiAPIResponseParser,
     safe_parse_dict_from_json_str,

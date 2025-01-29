@@ -1,16 +1,16 @@
 from unittest import TestCase
 
+from constants import MOCK_GOOGLE_GEMINI_API_RESPONSE
 from parameterized import parameterized
 
 from recruiterblast.parsers import (
     GoogleGeminiAPIResponseParser,
-    LinkedInJobPostAPIResponseParser,
     LinkedinCompanyAPIResponseParser,
+    LinkedInJobPostAPIResponseParser,
     parse_emails_from_text,
     parse_linkedin_job_url,
 )
 from recruiterblast.utils import iso_to_utc_timestamp
-from constants import MOCK_GOOGLE_GEMINI_API_RESPONSE
 
 
 class ParserTest(TestCase):
