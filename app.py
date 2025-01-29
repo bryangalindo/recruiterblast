@@ -1,18 +1,13 @@
 import traceback
 from urllib.parse import quote_plus
 
-import pandas as pd
 import streamlit as st
 
 import recruiterblast.config as cfg
 from recruiterblast.logger import setup_logger
 from recruiterblast.models import Company, Employee
 from recruiterblast.parsers import parse_linkedin_job_url
-from recruiterblast.scrapers import (
-    BingSearchScraper,
-    GoogleSearchScraper,
-    LinkedInScraper,
-)
+from recruiterblast.scrapers import GoogleSearchScraper, LinkedInScraper
 
 log = setup_logger(__name__)
 
@@ -33,6 +28,27 @@ def display_company_email_search_button(domain: str):
         f'<a href="{url}" target="_blank"><button style="background-color: #F63366; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Search {domain} Emails</button></a>',
         unsafe_allow_html=True,
     )
+
+
+def generate_email_formats_selections() -> list[str]:
+    separators = ["", ".", "_"]
+    email_permutations = ["All Permutations"]
+
+    for sep in separators:
+        email_permutations.extend(
+            [
+                f"[first]{sep}[last]@[domain].com",
+                f"[last]{sep}[first]@[domain].com",
+                f"[first_initial]{sep}[last]@[domain].com",
+                f"[first]{sep}[last_initial]@[domain].com",
+                f"[first_initial]{sep}[last_initial]@[domain].com",
+                f"[last]{sep}[first_initial]@[domain].com",
+                f"[last_initial]{sep}[first]@[domain].com",
+                f"[last_initial]{sep}[first_initial]@[domain].com",
+            ]
+        )
+
+    return email_permutations
 
 
 def main():
@@ -67,31 +83,20 @@ def main():
                     st.table(company.as_df())
 
                     if cfg.ENV != "prod":
-                        emails = ["email1@example.com", "email2@example.com"]
+                        suggested_email_format = (
+                            "The Company ABC's email format usually follows "
+                            "the pattern of First_Last@companyabc.com; "
+                            "this email format is used 95% of the time."
+                        )
                     else:
-                        bing_scraper = BingSearchScraper()
-                        bing_emails = bing_scraper.scrape_emails_from_company_domain(
-                            company.domain
-                        )
                         google_scraper = GoogleSearchScraper()
-                        google_emails = (
-                            google_scraper.scrape_emails_from_company_domain(
-                                company.domain
-                            )
+                        suggested_email_format = (
+                            google_scraper.scrape_suggested_email_format(company.domain)
                         )
-                        emails = set(bing_emails + google_emails)
 
-                    st.subheader("Company Emails")
-                    if emails:
-                        st.write(
-                            f"We scraped these emails from {company.domain}. "
-                            f"Hopefully they help you identify the correct email format."
-                        )
-                        st.table(pd.DataFrame(emails, columns=["email"]))
-                    st.write(
-                        f"Sometimes you can see more employee emails in a search engine's results snippet, try it out!"
-                    )
-                    display_company_email_search_button(company.domain)
+                    if suggested_email_format:
+                        st.subheader("Email Format")
+                        st.write(f"Per LeadIQ.com: {suggested_email_format}")
 
                     st.subheader("Recruiters")
 
