@@ -40,11 +40,11 @@ class Employee:
 class JobPost:
     id: int = None
     title: str = None
-    description: str = None
     post_date: str = None
     apply_url: str = None
     is_remote: bool = None
     location: str = None
+    description: str = None
 
     def as_df(self):
         data = {
