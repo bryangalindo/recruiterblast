@@ -1,4 +1,5 @@
 import traceback
+from itertools import chain
 from urllib.parse import quote_plus
 
 import streamlit as st
@@ -90,7 +91,7 @@ def main():
                         else {"technologies": ["Python"]}
                     )
 
-                    job_post.skills = skills.get("technologies")
+                    job_post.skills = list(chain.from_iterable(skills.values()))
                     job_post.job_url = job_url
                     st.subheader("Job Post Information")
                     st.table(job_post.as_df())
