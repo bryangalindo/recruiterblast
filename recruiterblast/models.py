@@ -43,8 +43,8 @@ class JobPost:
     apply_url: str = None
     is_remote: bool = None
     location: str = None
-    responsibilities: list = field(default_factory=list)
     technical_requirements: list = field(default_factory=list)
+    responsibilities: list = field(default_factory=list)
     soft_skills: list = field(default_factory=list)
     highlights: list = field(default_factory=list)
     job_url: str = None
