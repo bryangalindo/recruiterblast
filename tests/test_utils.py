@@ -3,7 +3,10 @@ from unittest import TestCase, mock
 from parameterized import parameterized
 
 from recruiterblast.models import Employee
-from recruiterblast.utils import generate_formatted_employee_email
+from recruiterblast.utils import (
+    generate_formatted_employee_email,
+    generate_rocketreach_formatted_username,
+)
 
 
 class UtilsTest(TestCase):
@@ -27,3 +30,14 @@ class UtilsTest(TestCase):
             expected_output,
             generate_formatted_employee_email(self.employee, input_format),
         )
+
+    @parameterized.expand(
+        [
+            ("full_format", "[first].[last]", "foo.bar"),
+            ("initial_format", "[first_initial][last_initial]", "fb"),
+            ("underscore_format", "[first]_[last_initial]", "foo_b"),
+        ]
+    )
+    def test_generate_rocketreach_formatted_username(self, name, format, expected):
+        actual = generate_rocketreach_formatted_username(self.employee, format)
+        self.assertEqual(expected, actual)

@@ -14,6 +14,18 @@ def iso_to_utc_timestamp(iso_timestamp_ms: int) -> str:
     return utc_timestamp.isoformat()
 
 
+def generate_rocketreach_formatted_username(employee, format: str) -> str:
+    first_initial = employee.first_name[0] if employee.first_name else ""
+    last_inital = employee.last_name[0] if employee.last_name else ""
+
+    username = format.replace("[first]", employee.first_name)
+    username = username.replace("[last]", employee.last_name)
+    username = username.replace("[first_initial]", first_initial)
+    username = username.replace("[last_initial]", last_inital)
+
+    return username
+
+
 def generate_formatted_employee_email(employee, format: str) -> str:
     email_parts = format.split("@")
 

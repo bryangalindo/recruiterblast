@@ -9,6 +9,7 @@ from recruiterblast.parsers import (
     LinkedInJobPostAPIResponseParser,
     parse_emails_from_text,
     parse_linkedin_job_url,
+    parse_rocket_reach_email_format,
 )
 from recruiterblast.utils import iso_to_utc_timestamp
 
@@ -51,6 +52,34 @@ class ParserTest(TestCase):
     def test_parser_returns_empty_str_for_invalid_linkedin_urls(self, input_str: str):
         actual = parse_linkedin_job_url(input_str)
         self.assertEqual("", actual)
+
+    @parameterized.expand(
+        [
+            (
+                "first_initial_last",
+                "Email format is [first_initial][last] (ex. jdoe@gitlab.com)",
+                "[first_initial][last]",
+            ),
+            (
+                "first_dot_last",
+                "Email format is [first].[last] (ex. jdoe@gitlab.com)",
+                "[first].[last]",
+            ),
+            (
+                "first_underscore_last_initial",
+                "Email format is [first]_[last_initial] (ex. jdoe@gitlab.com)",
+                "[first]_[last_initial]",
+            ),
+            (
+                "no_format_found",
+                "This text does not contain any email format information.",
+                None,
+            ),
+        ]
+    )
+    def test_extract_email_format(self, name, text, expected):
+        actual = parse_rocket_reach_email_format(text)
+        self.assertEqual(expected, actual)
 
 
 class EmailParserTest(TestCase):

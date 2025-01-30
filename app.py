@@ -8,9 +8,16 @@ import recruiterblast.config as cfg
 from recruiterblast.api import GoogleGeminiAPIClient
 from recruiterblast.logger import setup_logger
 from recruiterblast.models import Company, Employee, JobPost
-from recruiterblast.parsers import parse_emails_from_text, parse_linkedin_job_url
+from recruiterblast.parsers import (
+    parse_emails_from_text,
+    parse_linkedin_job_url,
+    parse_rocket_reach_email_format,
+)
 from recruiterblast.scrapers import GoogleSearchScraper, LinkedInScraper
-from recruiterblast.utils import generate_formatted_employee_email
+from recruiterblast.utils import (
+    generate_formatted_employee_email,
+    generate_rocketreach_formatted_username,
+)
 
 log = setup_logger(__name__)
 
@@ -28,7 +35,7 @@ def generate_email_subject_and_body(
         f"Here’s a high-level overview of my experience:\n\n"
         f"   ➡️ 4+ years as a backend software engineer\n"
         f"   ➡️ Previously at Bank of America (BofA)\n"
-        f"   ➡️ Saved BofA $221K by resolving a memory leak\n"
+        f"   ➡️ Saved BofA $221K by fixing a memory leak in service processing 10M+ trades.\n"
         f"   ➡️ Launched BigBagData.com, an analytics platform for vintage bags (boosted a store's sales by 31%!)\n"
         f"   ➡️ Relevant tech I've worked with: Python, Flask, SQL, DBT, Airflow, AWS, Apache Iceberg\n\n"
         f"Lastly, I completed Zach Wilson's data engineering bootcamp in Q4 2024 where I was awarded the "
@@ -96,40 +103,31 @@ def display_company_section(scraper: LinkedInScraper) -> Company:
 
 
 def display_suggested_email_format_section(company: Company):
-    mock_snippet = "The Company ABC's email format is First_Last@companyabc.com;"
+    leadiq_snippet = "The Company ABC's email format is First.Last@companyabc.com;"
+    rocket_snippet = "The Company ABC's email format is [first].[last] (test)."
 
     if cfg.IS_PROD:
         google_scraper = GoogleSearchScraper()
-        leadiq_suggested_email_format_snippet = (
-            google_scraper.scrape_leadiq_suggested_email_format(company.domain)
+        leadiq_snippet = google_scraper.scrape_leadiq_suggested_email_format(
+            company.domain
         )
-        rocketreach_suggested_email_format_snippet = (
-            google_scraper.scrape_rocketreach_suggested_email_format(company.domain)
+        rocket_snippet = google_scraper.scrape_rocketreach_suggested_email_format(
+            company.domain
         )
-    else:
-        leadiq_suggested_email_format_snippet = mock_snippet
-        rocketreach_suggested_email_format_snippet = mock_snippet
 
     email_format = None
 
-    if any(
-        [
-            leadiq_suggested_email_format_snippet,
-            rocketreach_suggested_email_format_snippet,
-        ]
-    ):
+    if any([leadiq_snippet, rocket_snippet]):
         st.subheader("Email Format")
 
-        formats = [
-            ("RocketReach.co", rocketreach_suggested_email_format_snippet),
-            ("LeadIQ.com", leadiq_suggested_email_format_snippet),
-        ]
+        if leadiq_snippet:
+            st.write(f"Per LeadIQ.com: {leadiq_snippet}")
+            email_format = parse_emails_from_text(leadiq_snippet)
+            email_format = email_format[0] if email_format else None
 
-        for source, snippet in formats:
-            if snippet:
-                st.write(f"Per {source}: {snippet}")
-                if source == "LeadIQ.com":
-                    email_format = parse_emails_from_text(snippet)
+        if rocket_snippet:
+            st.write(f"Per RocketReach.co: {rocket_snippet}")
+            email_format = parse_rocket_reach_email_format(rocket_snippet)
 
     return email_format
 
@@ -145,8 +143,12 @@ def display_recruiters_section(scraper, company, job_post, email_format):
 
     for recruiter in recruiters:
         subject, body = generate_email_subject_and_body(company, recruiter, job_post)
-        if email_format:
-            emails = [generate_formatted_employee_email(recruiter, email_format[0])]
+        if email_format and email_format.startswith("["):
+            username = generate_rocketreach_formatted_username(recruiter, email_format)
+            email = f"{username}@{company.domain}"
+            emails = [email]
+        elif email_format:
+            emails = [generate_formatted_employee_email(recruiter, email_format)]
         else:
             emails = recruiter.generate_email_permutations(company.domain)
 

@@ -28,6 +28,13 @@ def safe_parse_dict_from_json_str(json_str: str) -> dict:
         return {}
 
 
+def parse_rocket_reach_email_format(text: str) -> str:
+    parts = str(text).split(" ")
+    for part in parts:
+        if part.startswith("["):
+            return part
+
+
 class GoogleGeminiAPIResponseParser:
     def __init__(self, response: dict):
         self.response = response
