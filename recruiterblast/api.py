@@ -35,7 +35,7 @@ class GoogleGeminiAPIClient:
         url = f"{self.BASE_URL}?key={self.api_key}"
         response = requests.post(url, headers=self.headers, json=payload)
         data = response.json()
-        log.info(f"Successfully received response from {url=}, {data}")
+        log.info(f"Successfully received response from {url=}, {data=}")
         return data
 
 
