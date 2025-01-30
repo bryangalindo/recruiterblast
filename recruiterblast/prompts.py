@@ -16,6 +16,18 @@ JOB_DESCRIPTION_SKILLS_PARSE_PROMPT = (
     "improve the healthcare financial experience Compensation Range and Benefits Salary/Hourly "
     "Rate Range*: $145,000 - $161,625\n"
     'output: "{"technologies": ["Python", "Typescript"]}"\n'
-    "given the constraints above and the example, parse the technologies from this job description:\n"
-    "Job description: {job_description}"
+    "another example:\n"
+    "intput:"
+    "Piper Companies is seeking a Software Engineer to join an enterprise company located in Durham, NC. This role is a long term contract for a non profit firm."
+    "Responsibilities of the Software Engineer"
+    "Designing, developing, and maintaining applications using Python, Kubernetes and AWS"
+    "Development experience (currently hands-on) in Python, Microservice development"
+    "Hands-on experience with coding and test automation of front-end SPAs, web components, SSR architectures"
+    "Advanced serverless AWS development experience"
+    "Qualifications Of The Software Engineer"
+    "6+ years of experience "
+    "Preference coming from SWE and advanced Cloud native experience"
+    "Bachelors Degree or Technical College Degree\n"
+    'output: "{"technologies": ["Python", "Kubernetes", "AWS", "Microservice", "test automation"]}"'
+    "given the constraints above and the examples, parse the technologies from this job description:\n"
 )
