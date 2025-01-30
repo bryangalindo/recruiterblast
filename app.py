@@ -100,10 +100,10 @@ def main():
                     st.subheader("Job Post Information")
                     st.table(job_post.as_df())
 
-                    company, recruiters = (
-                        scraper.generate_mock_company_recruiter_data()
-                        if cfg.ENV != "prod"
-                        else scraper.fetch_company_and_recruiter_data()
+                    company = (
+                        scraper.fetch_company_from_job_post()
+                        if cfg.IS_PROD
+                        else scraper.generate_mock_company()
                     )
 
                     st.subheader("Company Information")
@@ -127,6 +127,12 @@ def main():
                         st.subheader("Email Format")
                         st.write(f"Per LeadIQ.com: {suggested_email_format}")
                         email_format = parse_emails_from_text(suggested_email_format)
+
+                    recruiters = (
+                        scraper.fetch_recruiters_from_company(company)
+                        if cfg.IS_PROD
+                        else scraper.generate_mock_recruiters()
+                    )
 
                     st.subheader("Recruiters")
 
