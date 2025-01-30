@@ -166,7 +166,7 @@ def main():
     st.set_page_config(page_title="RecruiterBlast.dev", page_icon="🚀")
 
     st.title("Recruiter Blast 🚀")
-    st.subheader("Find recruiters from job posts to send your pitch!")
+    st.subheader("Find recruiters from job posts, prepare your pitch, and send emails!")
 
     job_url = st.text_input(
         "Job URL", placeholder="https://www.linkedin.com/jobs/view/4133654166"
