@@ -121,8 +121,8 @@ def display_suggested_email_format_section(company: Company):
         st.subheader("Email Format")
 
         formats = [
-            ("RocketReach.co", leadiq_suggested_email_format_snippet),
-            ("LeadIQ.com", rocketreach_suggested_email_format_snippet),
+            ("RocketReach.co", rocketreach_suggested_email_format_snippet),
+            ("LeadIQ.com", leadiq_suggested_email_format_snippet),
         ]
 
         for source, snippet in formats:
