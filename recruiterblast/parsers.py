@@ -4,7 +4,10 @@ import re
 import tldextract
 from nameparser import HumanName
 
+from recruiterblast.logger import setup_logger
 from recruiterblast.utils import iso_to_utc_timestamp
+
+log = setup_logger(__name__)
 
 
 def parse_emails_from_text(text: str) -> list[str]:
@@ -30,6 +33,7 @@ class GoogleGeminiAPIResponseParser:
         self.response = response
 
     def get_response_text(self):
+        log.debug(f"Parsing {self.response=}...")
         candidates = self.response.get("candidates", [])
         if not candidates:
             return ""
