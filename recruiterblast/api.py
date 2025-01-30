@@ -2,12 +2,12 @@ import requests
 
 import recruiterblast.config as cfg
 from recruiterblast.constants import GOOGLE_GEMINI_API_URL
-from recruiterblast.prompts import LLM_JOB_DESCRIPTION_SKILLS_PARSER_PROMPT
 from recruiterblast.logger import setup_logger
 from recruiterblast.parsers import (
     GoogleGeminiAPIResponseParser,
     safe_parse_dict_from_json_str,
 )
+from recruiterblast.prompts import LLM_JOB_DESCRIPTION_SKILLS_PARSER_PROMPT
 
 log = setup_logger(__name__)
 
