@@ -53,6 +53,115 @@ def display_company_email_search_button(domain: str):
     )
 
 
+def display_job_post_section(scraper: LinkedInScraper) -> JobPost:
+    job_post = (
+        scraper.fetch_job_post_details()
+        if cfg.ENV == "prod"
+        else JobPost(
+            id=1,
+            title="SWE",
+            description="You will work for money. Python.",
+            post_date="2024-01-01T12:12:12",
+            apply_url="foobar.com",
+            is_remote=True,
+            location="Houston",
+        )
+    )
+    client = GoogleGeminiAPIClient()
+    skills = (
+        client.parse_skills_from_job_description(job_post.description)
+        if cfg.IS_PROD
+        else {"technologies": ["Python"]}
+    )
+
+    job_post.skills = list(chain.from_iterable(skills.values()))
+    job_post.job_url = scraper.job_post_url
+    st.subheader("Job Post Information")
+    st.table(job_post.as_df())
+
+    return job_post
+
+
+def display_company_section(scraper: LinkedInScraper) -> Company:
+    company = (
+        scraper.fetch_company_from_job_post()
+        if cfg.IS_PROD
+        else scraper.generate_mock_company()
+    )
+
+    st.subheader("Company Information")
+    st.table(company.as_df())
+
+    return company
+
+
+def display_suggested_email_format_section(company: Company):
+    mock_snippet = "The Company ABC's email format is First_Last@companyabc.com;"
+
+    if cfg.IS_PROD:
+        google_scraper = GoogleSearchScraper()
+        leadiq_suggested_email_format_snippet = (
+            google_scraper.scrape_leadiq_suggested_email_format(company.domain)
+        )
+        rocketreach_suggested_email_format_snippet = (
+            google_scraper.scrape_rocketreach_suggested_email_format(company.domain)
+        )
+    else:
+        leadiq_suggested_email_format_snippet = mock_snippet
+        rocketreach_suggested_email_format_snippet = mock_snippet
+
+    email_format = None
+
+    if any(
+        [
+            leadiq_suggested_email_format_snippet,
+            rocketreach_suggested_email_format_snippet,
+        ]
+    ):
+        st.subheader("Email Format")
+
+        formats = [
+            ("RocketReach.co", leadiq_suggested_email_format_snippet),
+            ("LeadIQ.com", rocketreach_suggested_email_format_snippet),
+        ]
+
+        for source, snippet in formats:
+            if snippet:
+                st.write(f"Per {source}: {snippet}")
+                if source == "LeadIQ.com":
+                    email_format = parse_emails_from_text(snippet)
+
+    return email_format
+
+
+def display_recruiters_section(scraper, company, job_post, email_format):
+    recruiters = (
+        scraper.fetch_recruiters_from_company(company)
+        if cfg.IS_PROD
+        else scraper.generate_mock_recruiters()
+    )
+
+    st.subheader("Recruiters")
+
+    for recruiter in recruiters:
+        subject, body = generate_email_subject_and_body(company, recruiter, job_post)
+        if email_format:
+            emails = [generate_formatted_employee_email(recruiter, email_format[0])]
+        else:
+            emails = recruiter.generate_email_permutations(company.domain)
+
+        with st.container():
+            st.markdown(
+                f"<div style='border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 15px;'>"
+                f"<strong>{recruiter.full_name}</strong> | {recruiter.locale} | "
+                f"<a href='{recruiter.profile_url}' target='_blank'>Profile</a> | "
+                f"<a href='https://mail.google.com/mail/?view=cm&fs=1&to={','.join(emails)}&su={subject}&body={body}' target='_blank'>Send Email</a>"
+                f"<br><em>{recruiter.headline}</em>"
+                f"</div>",
+                unsafe_allow_html=True,
+            )
+
+
 def main():
     st.set_page_config(page_title="RecruiterBlast.dev", page_icon="🚀")
 
@@ -75,116 +184,10 @@ def main():
                 try:
                     scraper = LinkedInScraper(job_url)
 
-                    job_post = (
-                        scraper.fetch_job_post_details()
-                        if cfg.ENV == "prod"
-                        else JobPost(
-                            id=1,
-                            title="SWE",
-                            description="You will work for money. Python.",
-                            post_date="2024-01-01T12:12:12",
-                            apply_url="foobar.com",
-                            is_remote=True,
-                            location="Houston",
-                        )
-                    )
-                    client = GoogleGeminiAPIClient()
-                    skills = (
-                        client.parse_skills_from_job_description(job_post.description)
-                        if cfg.IS_PROD
-                        else {"technologies": ["Python"]}
-                    )
-
-                    job_post.skills = list(chain.from_iterable(skills.values()))
-                    job_post.job_url = job_url
-                    st.subheader("Job Post Information")
-                    st.table(job_post.as_df())
-
-                    company = (
-                        scraper.fetch_company_from_job_post()
-                        if cfg.IS_PROD
-                        else scraper.generate_mock_company()
-                    )
-
-                    st.subheader("Company Information")
-                    st.table(company.as_df())
-
-                    if cfg.ENV != "prod":
-                        leadiq_suggested_email_format = (
-                            "The Company ABC's email format usually follows "
-                            "the pattern of First_Last@companyabc.com; "
-                            "this email format is used 95% of the time."
-                        )
-                        rocketreach_suggested_email_format = (
-                            "The Company ABC's email format usually follows "
-                            "the pattern of First_Last@companyabc.com; "
-                            "this email format is used 95% of the time."
-                        )
-                    else:
-                        google_scraper = GoogleSearchScraper()
-                        leadiq_suggested_email_format = (
-                            google_scraper.scrape_leadiq_suggested_email_format(
-                                company.domain
-                            )
-                        )
-                        rocketreach_suggested_email_format = (
-                            google_scraper.scrape_rocketreach_suggested_email_format(
-                                company.domain
-                            )
-                        )
-
-                    email_format = None
-
-                    if any(
-                        [
-                            leadiq_suggested_email_format,
-                            rocketreach_suggested_email_format,
-                        ]
-                    ):
-                        st.subheader("Email Format")
-                        st.write(f"Per LeadIQ.com: {leadiq_suggested_email_format}")
-                        st.write(
-                            f"Per RocketReach.co: {rocketreach_suggested_email_format}"
-                        )
-
-                        if leadiq_suggested_email_format:
-                            email_format = parse_emails_from_text(
-                                leadiq_suggested_email_format
-                            )
-
-                    recruiters = (
-                        scraper.fetch_recruiters_from_company(company)
-                        if cfg.IS_PROD
-                        else scraper.generate_mock_recruiters()
-                    )
-
-                    st.subheader("Recruiters")
-
-                    for recruiter in recruiters:
-                        subject, body = generate_email_subject_and_body(
-                            company, recruiter, job_post
-                        )
-                        if email_format:
-                            emails = [
-                                generate_formatted_employee_email(
-                                    recruiter, email_format[0]
-                                )
-                            ]
-                        else:
-                            emails = recruiter.generate_email_permutations(
-                                company.domain
-                            )
-
-                        with st.container():
-                            st.markdown(
-                                f"<div style='border: 1px solid #ddd; padding: 10px; border-radius: 8px; margin-bottom: 15px;'>"
-                                f"<strong>{recruiter.full_name}</strong> | {recruiter.locale} | "
-                                f"<a href='{recruiter.profile_url}' target='_blank'>Profile</a> | "
-                                f"<a href='https://mail.google.com/mail/?view=cm&fs=1&to={','.join(emails)}&su={subject}&body={body}' target='_blank'>Send Email</a>"
-                                f"<br><em>{recruiter.headline}</em>"
-                                f"</div>",
-                                unsafe_allow_html=True,
-                            )
+                    job_post = display_job_post_section(scraper)
+                    company = display_company_section(scraper)
+                    email_format = display_suggested_email_format_section(company)
+                    display_recruiters_section(scraper, company, job_post, email_format)
 
                 except Exception as e:
                     message = "Failed to fetch company and recruiter data"
