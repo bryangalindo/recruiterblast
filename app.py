@@ -110,23 +110,47 @@ def main():
                     st.table(company.as_df())
 
                     if cfg.ENV != "prod":
-                        suggested_email_format = (
+                        leadiq_suggested_email_format = (
+                            "The Company ABC's email format usually follows "
+                            "the pattern of First_Last@companyabc.com; "
+                            "this email format is used 95% of the time."
+                        )
+                        rocketreach_suggested_email_format = (
                             "The Company ABC's email format usually follows "
                             "the pattern of First_Last@companyabc.com; "
                             "this email format is used 95% of the time."
                         )
                     else:
                         google_scraper = GoogleSearchScraper()
-                        suggested_email_format = (
-                            google_scraper.scrape_suggested_email_format(company.domain)
+                        leadiq_suggested_email_format = (
+                            google_scraper.scrape_leadiq_suggested_email_format(
+                                company.domain
+                            )
+                        )
+                        rocketreach_suggested_email_format = (
+                            google_scraper.scrape_rocketreach_suggested_email_format(
+                                company.domain
+                            )
                         )
 
                     email_format = None
 
-                    if suggested_email_format:
+                    if any(
+                        [
+                            leadiq_suggested_email_format,
+                            rocketreach_suggested_email_format,
+                        ]
+                    ):
                         st.subheader("Email Format")
-                        st.write(f"Per LeadIQ.com: {suggested_email_format}")
-                        email_format = parse_emails_from_text(suggested_email_format)
+                        st.write(f"Per LeadIQ.com: {leadiq_suggested_email_format}")
+                        st.write(
+                            f"Per RocketReach.co: {rocketreach_suggested_email_format}"
+                        )
+
+                        if leadiq_suggested_email_format:
+                            email_format = parse_emails_from_text(
+                                leadiq_suggested_email_format
+                            )
 
                     recruiters = (
                         scraper.fetch_recruiters_from_company(company)

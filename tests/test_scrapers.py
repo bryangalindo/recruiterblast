@@ -3,7 +3,8 @@ from unittest import TestCase, mock
 from constants import (
     MOCK_COMPANY_API_RESPONSE,
     MOCK_COMPANY_ENTITY_API_RESPONSE,
-    MOCK_GOOGLE_SEARCH_API_EMAIL_FORMAT_RESPONSE,
+    MOCK_GOOGLE_SEARCH_API_LEADIQ_EMAIL_FORMAT_RESPONSE,
+    MOCK_GOOGLE_SEARCH_API_ROCKETREACH_EMAIL_FORMAT_RESPONSE,
     MOCK_GOOGLE_SEARCH_API_RESPONSE,
 )
 
@@ -52,17 +53,38 @@ class GoogleSearchScraperTest(TestCase):
         self.assertEqual([], emails)
 
     @mock.patch.object(GoogleSearchScraper, "_search_google")
-    def test_google_scraper_returns_suggested_email_format(self, mock_search):
-        mock_search.return_value = MOCK_GOOGLE_SEARCH_API_EMAIL_FORMAT_RESPONSE
+    def test_scraped_leadiq_suggested_email_format(self, mock_search):
+        mock_search.return_value = MOCK_GOOGLE_SEARCH_API_LEADIQ_EMAIL_FORMAT_RESPONSE
         scraper = GoogleSearchScraper()
 
-        suggested_email_format = scraper.scrape_suggested_email_format("foobar.com")
+        suggested_email_format = scraper.scrape_leadiq_suggested_email_format(
+            "foobar.com"
+        )
 
         self.assertEqual(
             (
                 "The FooBar's email format typically follows "
                 "the pattern of First_Last@foobar.com; "
-                "this email format is used 95% of the time."
+                "this email format is used 95% of the time. Other contacts within ..."
+            ),
+            suggested_email_format,
+        )
+
+    @mock.patch.object(GoogleSearchScraper, "_search_google")
+    def test_scraped_rocketreach_suggested_email_format(self, mock_search):
+        mock_search.return_value = (
+            MOCK_GOOGLE_SEARCH_API_ROCKETREACH_EMAIL_FORMAT_RESPONSE
+        )
+        scraper = GoogleSearchScraper()
+
+        suggested_email_format = scraper.scrape_rocketreach_suggested_email_format(
+            "foobar.com"
+        )
+
+        self.assertEqual(
+            (
+                "The most common ASRC Federal email format is [first].[last] (ex. jane.doe@asrcfederal.com), "
+                "which is being used by 89.8% of ASRC Federal work email addresses"
             ),
             suggested_email_format,
         )
