@@ -85,14 +85,12 @@ def display_job_post_section(scraper: LinkedInScraper) -> JobPost:
         }
     )
 
-    job_post.responsibilities = "\n".join(
-        description_attrs.get("core_responsibilities", "")
+    job_post.responsibilities = description_attrs.get("core_responsibilities", "")
+    job_post.technical_requirements = description_attrs.get(
+        "technical_requirements", ""
     )
-    job_post.technical_requirements = "\n".join(
-        description_attrs.get("technical_requirements", "")
-    )
-    job_post.soft_skills = "\n".join(description_attrs.get("soft_skills", ""))
-    job_post.highlights = "\n".join(description_attrs.get("highlights", ""))
+    job_post.soft_skills = description_attrs.get("soft_skills", "")
+    job_post.highlights = description_attrs.get("highlights", "")
     job_post.job_url = scraper.job_post_url
     job_post.description = ""
 
