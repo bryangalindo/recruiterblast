@@ -86,6 +86,8 @@ class LinkedinEmployeeAPIResponseParser:
 
     @staticmethod
     def get_employee_profile_url(data: dict) -> str:
+        if not data:
+            return ""
         return data["navigationUrl"].split("?")[0]
 
     @staticmethod
@@ -100,6 +102,8 @@ class LinkedinEmployeeAPIResponseParser:
 
     @staticmethod
     def get_employee_locale(data: dict) -> str:
+        if not data:
+            return ""
         return data.get("secondarySubtitle", {}).get("text", "")
 
 
