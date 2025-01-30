@@ -7,7 +7,7 @@ from recruiterblast.parsers import (
     GoogleGeminiAPIResponseParser,
     safe_parse_dict_from_json_str,
 )
-from recruiterblast.prompts import LLM_JOB_DESCRIPTION_SKILLS_PARSER_PROMPT
+from recruiterblast.prompts import LLM_JOB_DESCRIPTION_SUMMARY_PROMPT
 from recruiterblast.utils import retry
 
 log = setup_logger(__name__)
@@ -20,14 +20,17 @@ class GoogleGeminiAPIClient:
         self.api_key = cfg.GOOGLE_GEMINI_API_KEY
         self.headers = {"Content-Type": "application/json"}
 
-    def parse_skills_from_job_description(self, job_description: str) -> dict:
-        prompt = LLM_JOB_DESCRIPTION_SKILLS_PARSER_PROMPT
+    def parse_relevant_job_description_info(self, job_description: str) -> dict:
+        prompt = LLM_JOB_DESCRIPTION_SUMMARY_PROMPT
         prompt += f"Job description: {job_description}"
+
         payload = {"contents": [{"parts": [{"text": prompt}]}]}
         log.debug(f"Starting to submit {prompt=}...")
         response = self._make_request(payload)
+
         parser = GoogleGeminiAPIResponseParser(response)
         text = parser.get_response_text()
+
         return safe_parse_dict_from_json_str(text)
 
     @retry(log)
@@ -40,17 +43,15 @@ class GoogleGeminiAPIClient:
 
 
 if __name__ == "__main__":
-    pass
-    # description = """
-    # 2+ years of professional experience in software development, with a strong emphasis on development of large-scale and performant applications.
-    # Knowledge in at least one server-side language such as Java, C++, C#, Go, Python, Kotlin, or Ruby.
-    # Ability towards building resilient and operationally efficient backend systems exemplifying industry standards (HTTP REST, GraphQL, Serverless, SOA, etc).
-    # A desire to ship world class code daily.
-    # Good attention to detail, as well as a passion for delivering high-quality software solutions and compelling customer experiences
-    # Good problem-solving skills, possessing the ability to work independently or collaboratively to analyze and address complex technical challenges
-    # Excellent communication skills with the ability to collaborate effectively with cross-functional teams and those in non-technical roles, such as marketing, finance, and legal
-    # Knowledge of modern software development practices, version control systems, and agile methodologies
-    # """
-    # client = GoogleGeminiAPIClient()
-    # skills = client.parse_skills_from_job_description(description)
-    # print(skills)
+    # pass
+    description = """
+    About the job
+    Strong interest in development platforms, Data Engineering, MLOps, AI, CI/CD, infrastructure or making products for technical teams
+    Able to make effective trade-offs in regards to both engineering and product requirements, while balancing short term and long term needs
+    5+ years relevant industry experience in a fast-paced, high growth tech environment building UI component libraries, design systems, and tools using TypeScript
+    Demonstrated design and UX sensibilities
+    Knowledge of API standards including REST or GraphQL
+    """
+    client = GoogleGeminiAPIClient()
+    info = client.parse_relevant_job_description_info(description)
+    print(info)

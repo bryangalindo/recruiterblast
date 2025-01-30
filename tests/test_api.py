@@ -10,6 +10,11 @@ class TestGoogleGeminiAPIClient(TestCase):
     def test_parse_skills_from_job_description(self, mock_request):
         mock_request.return_value = MOCK_GOOGLE_GEMINI_API_RESPONSE
         client = GoogleGeminiAPIClient()
-        expected = {"Technologies": ["SQL", "Python", "Typescript"]}
-        actual = client.parse_skills_from_job_description("foobar")
+        expected = {
+            "core_responsibilities": ["foo"],
+            "technical_requirements": ["bar"],
+            "soft_skills": ["baz"],
+            "highlights": ["qux"],
+        }
+        actual = client.parse_relevant_job_description_info("foobar")
         self.assertEqual(expected, actual)

@@ -57,7 +57,12 @@ MOCK_GOOGLE_GEMINI_API_RESPONSE = {
         {
             "content": {
                 "parts": [
-                    {"text": '{"Technologies": ["SQL", "Python", "Typescript"]}'}
+                    {
+                        "text": (
+                            '{"core_responsibilities": ["foo"],"technical_requirements": ["bar"],'
+                            '"soft_skills": ["baz"],"highlights": ["qux"]}'
+                        )
+                    }
                 ],
             },
         }

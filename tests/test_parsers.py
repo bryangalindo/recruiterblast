@@ -214,6 +214,12 @@ class TestLinkedInJobPostAPIResponseParser(TestCase):
 
 class TestGoogleGeminiAPIResponseParser(TestCase):
     def test_get_response_text(self):
+        expected = (
+            '{"core_responsibilities": ["foo"],'
+            '"technical_requirements": ["bar"],'
+            '"soft_skills": ["baz"],'
+            '"highlights": ["qux"]}'
+        )
         parser = GoogleGeminiAPIResponseParser(MOCK_GOOGLE_GEMINI_API_RESPONSE)
         actual = parser.get_response_text()
-        self.assertEqual('{"Technologies": ["SQL", "Python", "Typescript"]}', actual)
+        self.assertEqual(expected, actual)
