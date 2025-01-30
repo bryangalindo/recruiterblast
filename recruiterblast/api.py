@@ -1,5 +1,6 @@
 import requests
 
+from recruiterblast.utils import retry
 import recruiterblast.config as cfg
 from recruiterblast.constants import GOOGLE_GEMINI_API_URL
 from recruiterblast.logger import setup_logger
@@ -29,19 +30,13 @@ class GoogleGeminiAPIClient:
         text = parser.get_response_text()
         return safe_parse_dict_from_json_str(text)
 
+    @retry(log)
     def _make_request(self, payload: dict) -> dict:
         url = f"{self.BASE_URL}?key={self.api_key}"
         response = requests.post(url, headers=self.headers, json=payload)
-
-        if response.status_code == 200:
-            log.info(f"Successfully received response from {url=}")
-            return response.json()
-        else:
-            log.warning(
-                f"Failed to get response from {url=}, {response.status_code}, "
-                f"{response.reason}, {payload=}"
-            )
-            return {}
+        data = response.json()
+        log.info(f"Successfully received response from {url=}, {data}")
+        return data
 
 
 if __name__ == "__main__":
