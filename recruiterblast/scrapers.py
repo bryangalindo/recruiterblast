@@ -260,7 +260,7 @@ class GoogleSearchScraper:
         self, domain: str, site: str, pattern: str
     ) -> str:
         results = self._search_google(
-            f'site:{site} "@{domain}"',
+            f'site:{site} "@{domain}" "{pattern}"',
         )
         search_results = results.get("items", [])
 
@@ -293,15 +293,13 @@ class GoogleSearchScraper:
 
 
 if __name__ == "__main__":
-    pass
+    # pass
     # job_url = "https://www.linkedin.com/jobs/view/4133654166"
     # scraper = LinkedInScraper(job_url)
     # scraper.fetch_job_post_details()
     # company = scraper.fetch_company_from_job_post()
-    # google_scraper = GoogleSearchScraper()
-    # google_emails = (
-    #     google_scraper.scrape_emails_from_company_domain(
-    #         company.domain
-    #     )
-    # )
-    # print(google_emails)
+    google_scraper = GoogleSearchScraper()
+    google_emails = google_scraper.scrape_rocketreach_suggested_email_format(
+        "fractal.ai"
+    )
+    print(google_emails)
