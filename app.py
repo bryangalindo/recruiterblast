@@ -1,5 +1,4 @@
 import traceback
-from itertools import chain
 from urllib.parse import quote_plus
 
 import streamlit as st
@@ -35,7 +34,7 @@ def generate_email_subject_and_body(
         f"Here’s a high-level overview of my experience:\n\n"
         f"   ➡️ 4+ years as a backend software engineer\n"
         f"   ➡️ Previously at Bank of America (BofA)\n"
-        f"   ➡️ Saved BofA $221K by fixing a memory leak in service processing 10M+ trades.\n"
+        f"   ➡️ Saved BofA $221K by fixing a memory leak in pipeline processing 10M+ trades.\n"
         f"   ➡️ Launched BigBagData.com, an analytics platform for vintage bags (boosted a store's sales by 31%!)\n"
         f"   ➡️ Relevant tech I've worked with: Python, Flask, SQL, DBT, Airflow, AWS, Apache Iceberg\n\n"
         f"Lastly, I completed Zach Wilson's data engineering bootcamp in Q4 2024 where I was awarded the "
@@ -75,14 +74,28 @@ def display_job_post_section(scraper: LinkedInScraper) -> JobPost:
         )
     )
     client = GoogleGeminiAPIClient()
-    skills = (
-        client.parse_skills_from_job_description(job_post.description)
+    description_attrs = (
+        client.parse_relevant_job_description_info(job_post.description)
         if cfg.IS_PROD
-        else {"technologies": ["Python"]}
+        else {
+            "core_responsibilities": ["code"],
+            "technical_requirements": ["python"],
+            "soft_skills": ["learn"],
+            "highlights": ["money"],
+        }
     )
 
-    job_post.skills = list(chain.from_iterable(skills.values()))
+    job_post.responsibilities = "\n".join(
+        description_attrs.get("core_responsibilities", "")
+    )
+    job_post.technical_requirements = "\n".join(
+        description_attrs.get("technical_requirements", "")
+    )
+    job_post.soft_skills = "\n".join(description_attrs.get("soft_skills", ""))
+    job_post.highlights = "\n".join(description_attrs.get("highlights", ""))
     job_post.job_url = scraper.job_post_url
+    job_post.description = ""
+
     st.subheader("Job Post Information")
     st.table(job_post.as_df())
 
