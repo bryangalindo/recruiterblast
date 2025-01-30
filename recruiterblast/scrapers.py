@@ -269,7 +269,10 @@ class GoogleSearchScraper:
         for i, item in enumerate(search_results):
             snippet = str(item.get("snippet", ""))
             log.debug(f"Parsing formats from {i=} {snippet=}...")
-            if pattern.lower() in snippet.lower():
+            if (
+                pattern.lower() in snippet.lower()
+                and f"@{domain.lower()}" in snippet.lower()
+            ):
                 return snippet
 
     @retry(log)

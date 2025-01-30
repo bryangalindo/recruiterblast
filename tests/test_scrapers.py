@@ -83,7 +83,7 @@ class GoogleSearchScraperTest(TestCase):
 
         self.assertEqual(
             (
-                "The most common ASRC Federal email format is [first].[last] (ex. jane.doe@asrcfederal.com), "
+                "The most common ASRC Federal email format is [first].[last] (ex. jane.doe@foobar.com), "
                 "which is being used by 89.8% of ASRC Federal work email addresses"
             ),
             suggested_email_format,
