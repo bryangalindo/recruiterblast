@@ -86,9 +86,10 @@ class LinkedinEmployeeAPIResponseParser:
 
     @staticmethod
     def get_employee_profile_url(data: dict) -> str:
-        if not data:
+        try:
+            return data["navigationUrl"].split("?")[0]
+        except Exception as e:
             return ""
-        return data["navigationUrl"].split("?")[0]
 
     @staticmethod
     def get_employee_first_name(full_name: str) -> str:
@@ -102,9 +103,10 @@ class LinkedinEmployeeAPIResponseParser:
 
     @staticmethod
     def get_employee_locale(data: dict) -> str:
-        if not data:
+        try:
+            return data.get("secondarySubtitle", {}).get("text", "")
+        except Exception as e:
             return ""
-        return data.get("secondarySubtitle", {}).get("text", "")
 
 
 class LinkedinCompanyAPIResponseParser:
