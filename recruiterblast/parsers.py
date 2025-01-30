@@ -100,7 +100,7 @@ class LinkedinEmployeeAPIResponseParser:
 
     @staticmethod
     def get_employee_locale(data: dict) -> str:
-        return data["secondarySubtitle"]["text"]
+        return data.get("secondarySubtitle", {}).get("text", "")
 
 
 class LinkedinCompanyAPIResponseParser:
