@@ -22,9 +22,11 @@ class GoogleGeminiAPIClient:
         prompt = (
             "Parse this job description for technology keywords. "
             "Return only a JSON dictionary string in the exact format shown below. "
-            "No explanations, no extra text, no formatting (e.g., 'json\n{'technologies': ['Python']}\n\n',), "
-            ", no new line characters (e.g., '{'technologies': ['Python']}\n'), and no context beyond the JSON output. "
-            '"{"technologies": ["SQL", "Python", "Typescript", "Snowflake", "API"]}"'
+            "No explanations, no extra text, no formatting (e.g., 'json\n...\n\n',), "
+            ", no new line characters (e.g., '\n'), and no context beyond the JSON output. "
+            "This is an example of what the output should be: "
+            '"{"technologies": ["SQL", "Python", "Typescript", "Snowflake", "API", "dbt", "AWS", "GCP", "Snowflake",'
+            '"QuickBase", "Google Analytics", "API", "data orchestration"]}"'
             f"Job description: {job_description}"
         )
         payload = {"contents": [{"parts": [{"text": prompt}]}]}
@@ -50,6 +52,8 @@ class GoogleGeminiAPIClient:
 
 
 if __name__ == "__main__":
-    client = GoogleGeminiAPIClient()
-    skills = client.parse_skills_from_job_description("Python job for money.")
-    print(skills)
+    pass
+    # description = ""
+    # client = GoogleGeminiAPIClient()
+    # skills = client.parse_skills_from_job_description(description)
+    # print(skills)
