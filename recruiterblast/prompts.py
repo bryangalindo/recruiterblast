@@ -17,7 +17,7 @@ JOB_DESCRIPTION_SKILLS_PARSE_PROMPT = (
     "Rate Range*: $145,000 - $161,625\n"
     'output: "{"technologies": ["Python", "Typescript"]}"\n'
     "another example:\n"
-    "intput:"
+    "input:"
     "Piper Companies is seeking a Software Engineer to join an enterprise company located in Durham, NC. This role is a long term contract for a non profit firm."
     "Responsibilities of the Software Engineer"
     "Designing, developing, and maintaining applications using Python, Kubernetes and AWS"
