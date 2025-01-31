@@ -10,3 +10,4 @@ streamlit
 parameterized
 pre-commit
 tldextract
+streamlit-feedback
