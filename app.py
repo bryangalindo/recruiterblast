@@ -1,12 +1,11 @@
 import traceback
-from urllib.parse import quote_plus
 
 import streamlit as st
 
 import recruiterblast.config as cfg
 from recruiterblast.api import GoogleGeminiAPIClient
 from recruiterblast.logger import setup_logger
-from recruiterblast.models import Company, Employee, JobPost
+from recruiterblast.models import Company, JobPost
 from recruiterblast.parsers import (
     parse_emails_from_text,
     parse_linkedin_job_url,
@@ -16,39 +15,10 @@ from recruiterblast.scrapers import GoogleSearchScraper, LinkedInScraper
 from recruiterblast.utils import (
     generate_formatted_employee_email,
     generate_rocketreach_formatted_username,
+    generate_email_subject_and_body,
 )
 
 log = setup_logger(__name__)
-
-
-def generate_email_subject_and_body(
-    company: Company, recruiter: Employee, job_post: JobPost
-) -> tuple[str, str]:
-    subject = f"👋 I'm 92.5% Fit for Your {job_post.title} Role!"
-    body = (
-        f"Hi {recruiter.first_name},\n\n"
-        f"I value your time, so I’ll keep this brief! My name is Bryan, and "
-        f"I recently applied for the {job_post.title} role at {company.name} [1]. "
-        f"I noticed you're on the recruiting team, so I thought I’d reach out in case my "
-        f"application gets lost in the shuffle.\n\n"
-        f"Here’s a high-level overview of my experience:\n\n"
-        f"   ➡️ 4+ years as a backend software engineer\n"
-        f"   ➡️ Previously at Bank of America (BofA)\n"
-        f"   ➡️ Saved BofA $221K by fixing a memory leak in pipeline processing 10M+ trades.\n"
-        f"   ➡️ Launched BigBagData.com, an analytics platform for vintage bags (boosted a store's sales by 31%!)\n"
-        f"   ➡️ Relevant tech I've worked with: Python, Flask, SQL, DBT, Airflow, AWS, Apache Iceberg\n\n"
-        f"Lastly, I completed Zach Wilson's data engineering bootcamp in Q4 2024 where I was awarded the "
-        f"‘Superbness Certificate’ and ‘Outstanding Capstone,’ honors presented to top 1% of class. The "
-        f"coursework included conceptual data modeling, slowly changing dimensions (SCDs), cumulative table design, "
-        f"write-audit-publish framework.\n\n"
-        f"I’ve attached and included a link to my resume below if you’re interested in chatting [2]. "
-        f"I look forward to hearing from you. Thanks!\n\n"
-        f"[1]: {job_post.job_url}\n"
-        f"[2]: bryangalindo.com/resume"
-    )
-    subject_encoded = quote_plus(subject).replace("+", "%20")
-    body_encoded = quote_plus(body).replace("+", "%20")
-    return subject_encoded, body_encoded
 
 
 def display_company_email_search_button(domain: str):
