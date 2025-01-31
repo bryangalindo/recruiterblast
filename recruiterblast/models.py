@@ -42,6 +42,7 @@ class JobPost:
     title: str = None
     apply_url: str = None
     is_remote: bool = None
+    is_easy_apply: bool = None
     location: str = None
     technical_requirements: list = field(default_factory=list)
     responsibilities: list = field(default_factory=list)
