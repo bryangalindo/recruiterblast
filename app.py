@@ -18,6 +18,8 @@ from recruiterblast.utils import (
     generate_email_subject_and_body,
 )
 
+from streamlit_feedback import streamlit_feedback
+
 log = setup_logger(__name__)
 
 
@@ -145,10 +147,21 @@ def display_recruiters_section(scraper, company, job_post, email_format):
             )
 
 
+def display_feedback_section():
+    st.subheader("Feedback")
+    st.write(f"Your feedback is appreciated!")
+    streamlit_feedback(
+        feedback_type="thumbs",
+        optional_text_label="[Optional] Please provide an explanation",
+        align="flex-start",
+    )
+
+
 def main():
     st.set_page_config(page_title="RecruiterBlast.dev", page_icon="🚀")
 
     st.title("Recruiter Blast 🚀")
+
     st.subheader("Find recruiters from job posts, prepare your pitch, and send emails!")
 
     job_url = st.text_input(
@@ -171,6 +184,7 @@ def main():
                     company = display_company_section(scraper)
                     email_format = display_suggested_email_format_section(company)
                     display_recruiters_section(scraper, company, job_post, email_format)
+                    display_feedback_section()
 
                 except Exception as e:
                     message = "Failed to fetch company and recruiter data"

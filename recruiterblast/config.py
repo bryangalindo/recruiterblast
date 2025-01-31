@@ -25,3 +25,4 @@ IS_PROD = ENV == "prod"
 IS_NON_PROD = ENV != "prod"
 
 RESUME_LINK = os.getenv("RESUME_LINK")
+FEEDBACK_EMAIL = os.getenv("FEEDBACK_EMAIL")
