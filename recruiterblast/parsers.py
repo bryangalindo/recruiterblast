@@ -39,6 +39,11 @@ class GoogleGeminiAPIResponseParser:
     def __init__(self, response: dict):
         self.response = response
 
+    def remove_json_formatting_text(self, text: str) -> str:
+        text = text.replace("```json\n", "")
+        text = text.replace("\n```", "")
+        return text
+
     def get_response_text(self):
         log.debug(f"Parsing {self.response=}...")
         candidates = self.response.get("candidates", [])
@@ -47,7 +52,9 @@ class GoogleGeminiAPIResponseParser:
         content_parts = candidates[0].get("content", {}).get("parts", [])
         if not content_parts:
             return ""
-        return content_parts[0].get("text", "")
+        text = content_parts[0].get("text", "")
+        text = self.remove_json_formatting_text(text)
+        return text
 
 
 class LinkedInJobPostAPIResponseParser:
@@ -153,6 +160,9 @@ class LinkedinCompanyAPIResponseParser:
 
     @staticmethod
     def get_domain(data: dict) -> str:
-        url = data["data"]["websiteUrl"]
-        extracted = tldextract.extract(url)
-        return f"{extracted.domain}.{extracted.suffix}"
+        try:
+            url = data["data"]["websiteUrl"]
+            extracted = tldextract.extract(url)
+            return f"{extracted.domain}.{extracted.suffix}"
+        except Exception as e:
+            return ""
