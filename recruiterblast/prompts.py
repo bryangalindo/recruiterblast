@@ -10,6 +10,9 @@ LLM_JOB_DESCRIPTION_SUMMARY_PROMPT = """
     No explanations, no extra text, no json formatting pre/post text (e.g., ```json\n or \n```),
     no new line characters (e.g., '\n'), and no context beyond the JSON output.
 
+    IT IS EXTREMELY IMPORTANT THAT THERE IS NO JSON FORMATTING TEXT (e.g., ```json\n).
+    DO NO INCLUDE IN RESPONSE. OTHERWISE THE PYTHON JSON LIBRARY WILL NOT BE ABLE TO PARSE CORRECTLY.
+
     {
       "core_responsibilities": [ ... ],
       "technical_requirements": [ ... ],
