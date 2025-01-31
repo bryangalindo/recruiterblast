@@ -3,7 +3,9 @@ import functools
 import random
 import time
 import traceback
+from urllib.parse import quote_plus
 
+import recruiterblast.config as cfg
 from recruiterblast.constants import USER_AGENTS
 
 
@@ -147,3 +149,31 @@ class Timer:
 
 def get_random_user_agent() -> str:
     return random.choice(USER_AGENTS)
+
+
+def generate_email_subject_and_body(company, recruiter, job_post) -> tuple[str, str]:
+    subject = f"👋 I'm 92.5% Fit for Your {job_post.title} Role!"
+    body = (
+        f"Hi {recruiter.first_name},\n\n"
+        f"I value your time, so I’ll keep this brief! My name is Bryan, and "
+        f"I recently applied for the {job_post.title} role at {company.name} [1]. "
+        f"I noticed you're on the recruiting team, so I thought I’d reach out in case my "
+        f"application gets lost in the shuffle.\n\n"
+        f"Here’s a high-level overview of my experience:\n\n"
+        f"   ➡️ 4+ years as a backend software engineer\n"
+        f"   ➡️ Previously at Bank of America (BofA)\n"
+        f"   ➡️ Fixed a memory leak in pipeline processing 10M+ trades -> Saved BofA $221K\n"
+        f"   ➡️ Launched bigbagdata.com -> boosted a vintage bag store's sales by 31% in 4 weeks\n"
+        f"   ➡️ Relevant tech I've worked with: Python, Flask, SQL, DBT, Airflow, AWS, Apache Iceberg\n\n"
+        f"Lastly, I completed Zach Wilson's data engineering bootcamp in Q4 2024 where I was awarded the "
+        f"‘Superbness Certificate’ and ‘Outstanding Capstone,’ honors presented to top 1% of class. The "
+        f"coursework included conceptual data modeling, slowly changing dimensions (SCDs), cumulative table design, "
+        f"write-audit-publish framework.\n\n"
+        f"I’ve attached and included a link to my resume below if you’re interested in chatting [2]. "
+        f"I look forward to hearing from you. Thanks!\n\n"
+        f"[1]: {job_post.job_url}\n"
+        f"[2]: {cfg.RESUME_LINK}"
+    )
+    subject_encoded = quote_plus(subject).replace("+", "%20")
+    body_encoded = quote_plus(body).replace("+", "%20")
+    return subject_encoded, body_encoded
