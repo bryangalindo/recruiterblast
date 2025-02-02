@@ -165,11 +165,11 @@ def display_feedback_section():
 
 
 def main():
-    st.set_page_config(page_title="RecruiterBlast.dev", page_icon="🚀")
+    st.set_page_config(page_title="DeepRecruiter.io", page_icon="🌑")
 
-    st.title("Recruiter Blast 🚀")
+    st.title("🌑 DeepRecruiter.io")
 
-    st.subheader("Find recruiters from job posts, prepare your pitch, and send emails!")
+    st.subheader("Find recruiters from job posts, prepare your pitch, and send emails.")
 
     job_url = st.text_input(
         "Job URL", placeholder="https://www.linkedin.com/jobs/view/4133654166"
