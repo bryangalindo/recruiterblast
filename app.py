@@ -1,6 +1,7 @@
 import traceback
 
 import streamlit as st
+from urllib.parse import quote_plus
 
 import recruiterblast.config as cfg
 from recruiterblast.api import GoogleGeminiAPIClient
@@ -115,7 +116,9 @@ def display_suggested_email_format_section(company: Company):
     return email_format
 
 
-def display_recruiters_section(scraper, company, job_post, email_format):
+def display_recruiters_section(
+    scraper, company, job_post, email_format, subject_override="", body_override=""
+):
     recruiters = (
         scraper.fetch_recruiters_from_company(company)
         if cfg.IS_PROD
@@ -126,6 +129,10 @@ def display_recruiters_section(scraper, company, job_post, email_format):
 
     for recruiter in recruiters:
         subject, body = generate_email_subject_and_body(company, recruiter, job_post)
+        if subject_override:
+            subject = quote_plus(subject_override).replace("+", "%20")
+        if body_override:
+            body = quote_plus(body_override).replace("+", "%20")
         if email_format and email_format.startswith("["):
             username = generate_rocketreach_formatted_username(recruiter, email_format)
             email = f"{username}@{company.domain}"
@@ -168,6 +175,17 @@ def main():
         "Job URL", placeholder="https://www.linkedin.com/jobs/view/4133654166"
     )
 
+    subject_override = st.text_input(
+        "Email subject", placeholder="I am a fit for this role."
+    )
+    body_override = st.text_area("Email body", placeholder="This is why.")
+
+    st.markdown(
+        "<p style='color: gray;'>No worries, we don’t store your data. "
+        "All information is only used during your session and isn’t saved anywhere.</p>",
+        unsafe_allow_html=True,
+    )
+
     if st.button("Find Recruiters", type="primary"):
 
         if job_url:
@@ -183,7 +201,14 @@ def main():
                     job_post = display_job_post_section(scraper)
                     company = display_company_section(scraper)
                     email_format = display_suggested_email_format_section(company)
-                    display_recruiters_section(scraper, company, job_post, email_format)
+                    display_recruiters_section(
+                        scraper,
+                        company,
+                        job_post,
+                        email_format,
+                        subject_override,
+                        body_override,
+                    )
                     display_feedback_section()
 
                 except Exception as e:
